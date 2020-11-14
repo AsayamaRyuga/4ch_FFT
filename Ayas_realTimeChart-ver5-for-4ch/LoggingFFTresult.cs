@@ -31,7 +31,7 @@ namespace Ayas_realTimeChart_ver1
             stpw.Restart();
             writer = new System.IO.StreamWriter(@logfilename, true, System.Text.Encoding.Default);
             string tmp = null;
-            tmp += "date,max Frequency[Hz],Norm,time interval(Ave),sampling frequency[Hz],MaxIndex";//先頭行の表記
+            tmp += "date,CH0 max Frequency[Hz],CH1 max Frequency[Hz],CH2 max Frequency[Hz],CH3 max Frequency[Hz],CH0 Norm,CH1 Norm,CH2 Norm,CH3 Norm,CH0 MaxIndex,CH1 MaxIndex,CH2 MaxIndex,CH3 MaxIndex,time interval(Ave) ,sampling frequency[Hz]";//先頭行の表記
             writer.WriteLine(tmp);
             return true;
         }

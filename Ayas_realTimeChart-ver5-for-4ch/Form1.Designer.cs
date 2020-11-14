@@ -52,7 +52,7 @@
             this.button_logoff = new System.Windows.Forms.Button();
             this.groupBox_log = new System.Windows.Forms.GroupBox();
             this.checkBox_zeroset = new System.Windows.Forms.CheckBox();
-            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart_FFTmagnitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label_timeInterval = new System.Windows.Forms.Label();
             this.label_maxIndex = new System.Windows.Forms.Label();
             this.checkBox_FFT_Yaxis_Fixed = new System.Windows.Forms.CheckBox();
@@ -61,15 +61,15 @@
             this.comboBox_windowFunc = new System.Windows.Forms.ComboBox();
             this.label_maxFrequency = new System.Windows.Forms.Label();
             this.label_samplingFrequency = new System.Windows.Forms.Label();
-            this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart_windowFunc = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.comboBox_COM = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox_COM = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox_log.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_windowFunc)).BeginInit();
             this.groupBox_COM.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -196,21 +196,21 @@
             this.checkBox_zeroset.Text = "ZeroSet";
             this.checkBox_zeroset.UseVisualStyleBackColor = true;
             // 
-            // chart2
+            // chart_FFTmagnitude
             // 
             chartArea2.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea2);
+            this.chart_FFTmagnitude.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
-            this.chart2.Legends.Add(legend2);
-            this.chart2.Location = new System.Drawing.Point(751, 9);
-            this.chart2.Name = "chart2";
+            this.chart_FFTmagnitude.Legends.Add(legend2);
+            this.chart_FFTmagnitude.Location = new System.Drawing.Point(751, 9);
+            this.chart_FFTmagnitude.Name = "chart_FFTmagnitude";
             series5.ChartArea = "ChartArea1";
             series5.Legend = "Legend1";
             series5.Name = "complex data";
-            this.chart2.Series.Add(series5);
-            this.chart2.Size = new System.Drawing.Size(461, 329);
-            this.chart2.TabIndex = 9;
-            this.chart2.Text = "chart2";
+            this.chart_FFTmagnitude.Series.Add(series5);
+            this.chart_FFTmagnitude.Size = new System.Drawing.Size(461, 329);
+            this.chart_FFTmagnitude.TabIndex = 9;
+            this.chart_FFTmagnitude.Text = "chart2";
             // 
             // label_timeInterval
             // 
@@ -295,21 +295,21 @@
             this.label_samplingFrequency.TabIndex = 15;
             this.label_samplingFrequency.Text = "sampling frequency：";
             // 
-            // chart3
+            // chart_windowFunc
             // 
             chartArea3.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea3);
+            this.chart_windowFunc.ChartAreas.Add(chartArea3);
             legend3.Name = "Legend1";
-            this.chart3.Legends.Add(legend3);
-            this.chart3.Location = new System.Drawing.Point(271, 344);
-            this.chart3.Name = "chart3";
+            this.chart_windowFunc.Legends.Add(legend3);
+            this.chart_windowFunc.Location = new System.Drawing.Point(271, 344);
+            this.chart_windowFunc.Name = "chart_windowFunc";
             series6.ChartArea = "ChartArea1";
             series6.Legend = "Legend1";
             series6.Name = "Series1";
-            this.chart3.Series.Add(series6);
-            this.chart3.Size = new System.Drawing.Size(683, 290);
-            this.chart3.TabIndex = 15;
-            this.chart3.Text = "chart3";
+            this.chart_windowFunc.Series.Add(series6);
+            this.chart_windowFunc.Size = new System.Drawing.Size(683, 290);
+            this.chart_windowFunc.TabIndex = 15;
+            this.chart_windowFunc.Text = "chart3";
             // 
             // comboBox_COM
             // 
@@ -351,9 +351,9 @@
             this.ClientSize = new System.Drawing.Size(1224, 645);
             this.Controls.Add(this.groupBox_COM);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.chart3);
+            this.Controls.Add(this.chart_windowFunc);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.chart2);
+            this.Controls.Add(this.chart_FFTmagnitude);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label_Free);
             this.Controls.Add(this.chart1);
@@ -365,10 +365,10 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.groupBox_log.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_windowFunc)).EndInit();
             this.groupBox_COM.ResumeLayout(false);
             this.groupBox_COM.PerformLayout();
             this.ResumeLayout(false);
@@ -388,7 +388,7 @@
         private System.Windows.Forms.Button button_logoff;
         private System.Windows.Forms.GroupBox groupBox_log;
         private System.Windows.Forms.CheckBox checkBox_zeroset;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_FFTmagnitude;
         private System.Windows.Forms.Label label_timeInterval;
         private System.Windows.Forms.Label label_maxIndex;
         private System.Windows.Forms.CheckBox checkBox_FFT_Yaxis_Fixed;
@@ -397,7 +397,7 @@
         private System.Windows.Forms.Label label_samplingFrequency;
         private System.Windows.Forms.Label label_maxFrequency;
         private System.Windows.Forms.ComboBox comboBox_windowFunc;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart3;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_windowFunc;
         private System.Windows.Forms.ComboBox comboBox_COM;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox_COM;

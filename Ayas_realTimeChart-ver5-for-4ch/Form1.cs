@@ -72,7 +72,7 @@ namespace Ayas_realTimeChart_ver1
         string legendCH0 = "CH0";
         string legendCH1 = "CH1";
         string legendCH2 = "CH2";
-        string legendCH3 = "CH4";
+        string legendCH3 = "CH3";
 
         string legend2 = "complex data";
         string legend3 = "row data";
@@ -148,10 +148,10 @@ namespace Ayas_realTimeChart_ver1
                 }
                 //chart1.Series[legendCH0].Points.Clear();
                 
-                chart2.Series[legend2].Points.Clear();
+                chart_FFTmagnitude.Series[legend2].Points.Clear();
                 chart1.Titles.Add("Row data");// グラフのタイトル
-                chart2.Titles.Add("FFT");// グラフのタイトル
-                chart3.Titles.Add("row & window Func");
+                chart_FFTmagnitude.Titles.Add("FFT");// グラフのタイトル
+                chart_windowFunc.Titles.Add("row & window Func");
             }
             catch (Exception ex)
             {
@@ -277,7 +277,7 @@ namespace Ayas_realTimeChart_ver1
                 }
                 chart1.Series[legendCH0].Color = Color.Orange;
                 chart1.Series[legendCH1].Color = Color.BlueViolet;
-                chart1.Series[legendCH2].Color = Color.Maroon;
+                chart1.Series[legendCH2].Color = Color.DeepSkyBlue;
                 chart1.Series[legendCH3].Color = Color.Green;
 
             }
@@ -346,32 +346,32 @@ namespace Ayas_realTimeChart_ver1
             double CH3_Ave = CH3_data.Average();
 
             // FFTグラフの描画設定
-            chart2.Series.Clear();
-            chart2.Series.Add(legend2);
-            chart2.ChartAreas[0].AxisX.Title = "Index";
-            chart2.ChartAreas[0].AxisY.Title = "Norm";
-            chart2.Series[legend2].IsVisibleInLegend = false;// 凡例表示設定
-            chart2.Series[legend2].IsValueShownAsLabel = false;// データラベル表示設定
-            chart2.Series[legend2].ChartType = SeriesChartType.Column;// 棒グラフを指定
+            chart_FFTmagnitude.Series.Clear();
+            chart_FFTmagnitude.Series.Add(legend2);
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Title = "Index";
+            chart_FFTmagnitude.ChartAreas[0].AxisY.Title = "Norm";
+            chart_FFTmagnitude.Series[legend2].IsVisibleInLegend = false;// 凡例表示設定
+            chart_FFTmagnitude.Series[legend2].IsValueShownAsLabel = false;// データラベル表示設定
+            chart_FFTmagnitude.Series[legend2].ChartType = SeriesChartType.Column;// 棒グラフを指定
             //chart2.Series[legend2].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
-            chart2.ChartAreas[0].AxisX.Maximum = N / 2;
-            chart2.ChartAreas[0].AxisX.Minimum = 0;
-            chart2.ChartAreas[0].AxisX.Interval = N / 8;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Maximum = N / 2;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Minimum = 0;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Interval = N / 8;
 
             // FFT前のグラフの描画設定
-            chart3.Series.Clear();
-            chart3.Series.Add(legend3);
-            chart3.Series.Add(legend4);
-            chart3.ChartAreas[0].AxisX.Title = "Index";
-            chart3.ChartAreas[0].AxisY.Title = "Inductance[μH]";
-            chart3.Series[legend3].IsValueShownAsLabel = false;// データラベル表示設定
-            chart3.Series[legend4].IsValueShownAsLabel = false;// データラベル表示設定
-            chart3.ChartAreas[0].AxisX.Minimum = 0;
-            chart3.ChartAreas[0].AxisX.Interval = N / 8;
-            chart3.Series[legend3].ChartType = SeriesChartType.Line;
-            chart3.Series[legend4].ChartType = SeriesChartType.Line;
-            chart3.Series[legend3].BorderWidth = 2;// 折れ線グラフの幅を指定
-            chart3.Series[legend4].BorderWidth = 2;// 折れ線グラフの幅を指定
+            chart_windowFunc.Series.Clear();
+            chart_windowFunc.Series.Add(legend3);
+            chart_windowFunc.Series.Add(legend4);
+            chart_windowFunc.ChartAreas[0].AxisX.Title = "Index";
+            chart_windowFunc.ChartAreas[0].AxisY.Title = "Inductance[μH]";
+            chart_windowFunc.Series[legend3].IsValueShownAsLabel = false;// データラベル表示設定
+            chart_windowFunc.Series[legend4].IsValueShownAsLabel = false;// データラベル表示設定
+            chart_windowFunc.ChartAreas[0].AxisX.Minimum = 0;
+            chart_windowFunc.ChartAreas[0].AxisX.Interval = N / 8;
+            chart_windowFunc.Series[legend3].ChartType = SeriesChartType.Line;
+            chart_windowFunc.Series[legend4].ChartType = SeriesChartType.Line;
+            chart_windowFunc.Series[legend3].BorderWidth = 2;// 折れ線グラフの幅を指定
+            chart_windowFunc.Series[legend4].BorderWidth = 2;// 折れ線グラフの幅を指定
 
             label_timeInterval.Text = "time interval：" + samplingRate + "[ms]";
 
@@ -417,12 +417,12 @@ namespace Ayas_realTimeChart_ver1
                 complexData_CH2[i] = new Complex(CH2_data[i] * winValue, 0);
                 complexData_CH3[i] = new Complex(CH3_data[i] * winValue, 0);
 
-                chart3.Series[legend3].Points.AddXY(i, CH0_data[i]);
-                chart3.Series[legend4].Points.AddXY(i, CH0_data[i] * winValue);
+                chart_windowFunc.Series[legend3].Points.AddXY(i, CH0_data[i]);
+                chart_windowFunc.Series[legend4].Points.AddXY(i, CH0_data[i] * winValue);
             }
 
-            chart3.Titles.Clear();
-            chart3.Titles.Add("row & " + comboBox_windowFunc.SelectedItem.ToString());
+            chart_windowFunc.Titles.Clear();
+            chart_windowFunc.Titles.Add("row & " + comboBox_windowFunc.SelectedItem.ToString());
 
             /*****フーリエ変換実行（FFT）*****/
             Fourier.Forward(complexData_CH0, FourierOptions.Default);
@@ -431,7 +431,7 @@ namespace Ayas_realTimeChart_ver1
             Fourier.Forward(complexData_CH3, FourierOptions.Default);
 
             // グラフ描画＆logの記録
-            for (int i = 0; i <= N / 2; i++)// 標準化定理よりFFTで有効なのはNの半分まで
+            for (int i = 0; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
             {
 
                 if (flag_log)
@@ -451,50 +451,71 @@ namespace Ayas_realTimeChart_ver1
                 complexDataAfter_CH2[i] = complexData_CH2[i].Magnitude;
                 complexDataAfter_CH3[i] = complexData_CH3[i].Magnitude;
 
-                chart2.Series[legend2].Points.AddXY(i, complexData_CH0[i].Magnitude);
+                chart_FFTmagnitude.Series[legend2].Points.AddXY(i, complexData_CH1[i].Magnitude);
+                //chart2.Series[]
 
-                // 最大ノルムの確認
+                
+            }
+
+            // 最大ノルムの確認
+            for (int i = 0; i < N/2; i++)
+            {
+                
                 if (complexData_CH0[i].Magnitude == complexDataAfter_CH0.Max())
                 {
                     MaxIndex[0] = i;
                 }
+            }
+            for (int i = 0; i < N / 2; i++)
+            {
                 if (complexData_CH1[i].Magnitude == complexDataAfter_CH1.Max())
                 {
                     MaxIndex[1] = i;
                 }
+            }
+            for (int i = 0; i < N / 2; i++)
+            {
                 if (complexData_CH2[i].Magnitude == complexDataAfter_CH2.Max())
                 {
                     MaxIndex[2] = i;
                 }
+            }
+            for (int i = 0; i < N / 2; i++)
+            {
                 if (complexData_CH3[i].Magnitude == complexDataAfter_CH3.Max())
                 {
                     MaxIndex[3] = i;
                 }
             }
 
+
             label_samplingFrequency.Text = "sampling frequency：" + (1 / (samplingRate * N)) + "[Hz]";
-            label_maxIndex.Text = "最大インデックス：" + Convert.ToString(MaxIndex);
-            label_maxFrequency.Text = "Max frequency：" + Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "[Hz]";
+            label_maxIndex.Text = "最大インデックス：" + Convert.ToString(MaxIndex[0]) + " / " + Convert.ToString(MaxIndex[1]) + " / " + Convert.ToString(MaxIndex[2]) + " / " + Convert.ToString(MaxIndex[3]);
+            label_maxFrequency.Text = "Max frequency：" + Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[3] / (samplingRate * N)) + "[Hz] / ";
 
             if (flag_log)
             {
-                loggingFFTresult.write(Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + samplingRate + "," + (1 / (samplingRate * N)) + "," + Convert.ToString(MaxIndex));
+                //"date,CH0 max Frequency[Hz],CH1 max Frequency[Hz],CH2 max Frequency[Hz],CH3 max Frequency[Hz],CH0 Norm,CH1 Norm,CH2 Norm,CH3 Norm,CH0 MaxIndex,CH1 MaxIndex,CH2 MaxIndex,CH3 MaxIndex,time interval(Ave) ,sampling frequency[Hz]"
+                loggingFFTresult.write(Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[3] / (samplingRate * N))
+                    + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + complexData_CH0[MaxIndex[1]].Magnitude + "," + complexData_CH0[MaxIndex[2]].Magnitude + "," + complexData_CH0[MaxIndex[3]].Magnitude
+                    + "," + Convert.ToString(MaxIndex[0]) + "," + Convert.ToString(MaxIndex[1]) + "," + Convert.ToString(MaxIndex[2]) + "," + Convert.ToString(MaxIndex[3])
+                    + "," + samplingRate + "," + (1 / (samplingRate * N)));
                 
                 FFTimagefilename = imagefilepath + "FFTresult-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
                 Windowimagefilename = imagefilepath + "WINandRow-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
 
-                chart2.SaveImage(FFTimagefilename, ChartImageFormat.Jpeg);// FFT後のグラフ保存
-                chart3.SaveImage(Windowimagefilename, ChartImageFormat.Jpeg);// 生データと窓関数を掛けた後のグラフの保存
+                chart_FFTmagnitude.SaveImage(FFTimagefilename, ChartImageFormat.Jpeg);// FFT後のグラフ保存
+                chart_windowFunc.SaveImage(Windowimagefilename, ChartImageFormat.Jpeg);// 生データと窓関数を掛けた後のグラフの保存
 
             }
 
             if (checkBox_FFT_Yaxis_Fixed.Checked)// グラフの最大値設定
             {
-                chart2.ChartAreas[0].AxisY.Maximum = 0.1;
+                chart_FFTmagnitude.ChartAreas[0].AxisY.Maximum = 0.1;
             }
             else
             {
-                chart2.ChartAreas[0].AxisY.Maximum = complexDataAfter_CH0.Max();
+                chart_FFTmagnitude.ChartAreas[0].AxisY.Maximum = complexDataAfter_CH0.Max();
             }
 
             
