@@ -360,20 +360,22 @@ namespace Ayas_realTimeChart_ver1
 
             // FFT前のグラフの描画設定
             chart_windowFunc.Series.Clear();
-            chart_windowFunc.Series.Add(legend3);
-            chart_windowFunc.Series.Add(legend4);
+            for (int i = 0; i < 4; i++)
+            {
+                string CH = "CH" + Convert.ToString(i);
+                chart_windowFunc.Series.Add(CH);
+                chart_windowFunc.Series[CH].IsValueShownAsLabel = false;// データラベル表示設定
+                chart_windowFunc.Series[CH].ChartType = SeriesChartType.Line;
+                chart_windowFunc.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
+            }
+            //chart_windowFunc.Series.Add(legendch);
+            
             chart_windowFunc.ChartAreas[0].AxisX.Title = "Index";
             chart_windowFunc.ChartAreas[0].AxisY.Title = "Inductance[μH]";
-            chart_windowFunc.Series[legend3].IsValueShownAsLabel = false;// データラベル表示設定
-            chart_windowFunc.Series[legend4].IsValueShownAsLabel = false;// データラベル表示設定
             chart_windowFunc.ChartAreas[0].AxisX.Minimum = 0;
             chart_windowFunc.ChartAreas[0].AxisX.Interval = N / 8;
-            chart_windowFunc.Series[legend3].ChartType = SeriesChartType.Line;
-            chart_windowFunc.Series[legend4].ChartType = SeriesChartType.Line;
-            chart_windowFunc.Series[legend3].BorderWidth = 2;// 折れ線グラフの幅を指定
-            chart_windowFunc.Series[legend4].BorderWidth = 2;// 折れ線グラフの幅を指定
 
-            label_timeInterval.Text = "time interval：" + samplingRate + "[ms]";
+            
 
             // ゼロ調整＆複素数データ変換
             for (int i = 0; i < N; i++)
@@ -417,8 +419,10 @@ namespace Ayas_realTimeChart_ver1
                 complexData_CH2[i] = new Complex(CH2_data[i] * winValue, 0);
                 complexData_CH3[i] = new Complex(CH3_data[i] * winValue, 0);
 
-                chart_windowFunc.Series[legend3].Points.AddXY(i, CH0_data[i]);
-                chart_windowFunc.Series[legend4].Points.AddXY(i, CH0_data[i] * winValue);
+                chart_windowFunc.Series[legendCH0].Points.AddXY(i, CH0_data[i] * winValue);
+                chart_windowFunc.Series[legendCH1].Points.AddXY(i, CH1_data[i] * winValue);
+                chart_windowFunc.Series[legendCH2].Points.AddXY(i, CH2_data[i] * winValue);
+                chart_windowFunc.Series[legendCH3].Points.AddXY(i, CH3_data[i] * winValue);
             }
 
             chart_windowFunc.Titles.Clear();
@@ -433,7 +437,6 @@ namespace Ayas_realTimeChart_ver1
             // グラフ描画＆logの記録
             for (int i = 0; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
             {
-
                 if (flag_log)
                 {
                     string logFFTmsg = i + "," + (i/(samplingRate * N))
@@ -452,9 +455,6 @@ namespace Ayas_realTimeChart_ver1
                 complexDataAfter_CH3[i] = complexData_CH3[i].Magnitude;
 
                 chart_FFTmagnitude.Series[legend2].Points.AddXY(i, complexData_CH1[i].Magnitude);
-                //chart2.Series[]
-
-                
             }
 
             // 最大ノルムの確認
@@ -488,7 +488,7 @@ namespace Ayas_realTimeChart_ver1
                 }
             }
 
-
+            label_timeInterval.Text = "time interval：" + samplingRate + "[s]";
             label_samplingFrequency.Text = "sampling frequency：" + (1 / (samplingRate * N)) + "[Hz]";
             label_maxIndex.Text = "最大インデックス：" + Convert.ToString(MaxIndex[0]) + " / " + Convert.ToString(MaxIndex[1]) + " / " + Convert.ToString(MaxIndex[2]) + " / " + Convert.ToString(MaxIndex[3]);
             label_maxFrequency.Text = "Max frequency：" + Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "[Hz] / " + Convert.ToString(MaxIndex[3] / (samplingRate * N)) + "[Hz] / ";
