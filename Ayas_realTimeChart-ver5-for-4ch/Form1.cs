@@ -51,7 +51,7 @@ namespace Ayas_realTimeChart_ver1
         //private double[] timeBefore = new double[256];
         private double[,] DataBox = new double[256, 5];
         private double[] timeAve = new double[256];
-        int MaxIndex;// 最大ノルムのインデックスを格納する場所
+        int[] MaxIndex;// 最大ノルムのインデックスを格納する場所
 
         // 窓関数
         public enum WindowFunc
@@ -316,6 +316,7 @@ namespace Ayas_realTimeChart_ver1
 
         private void FFT(object sender, EventArgs e)
         {
+            MaxIndex = new int[4];
             Complex[] complexData_CH0 = new Complex[N];
             Complex[] complexData_CH1 = new Complex[N];
             Complex[] complexData_CH2 = new Complex[N];
@@ -435,7 +436,11 @@ namespace Ayas_realTimeChart_ver1
 
                 if (flag_log)
                 {
-                    string logFFTmsg = i + "," + (i/(samplingRate * N)) + "," + Convert.ToString(complexData_CH0[i].Magnitude);
+                    string logFFTmsg = i + "," + (i/(samplingRate * N))
+                        + "," + Convert.ToString(complexData_CH0[i].Magnitude)
+                        + "," + Convert.ToString(complexData_CH1[i].Magnitude)
+                        + "," + Convert.ToString(complexData_CH2[i].Magnitude)
+                        + "," + Convert.ToString(complexData_CH3[i].Magnitude);
                     //string logFFTmsg = Convert.ToString(array_data[i, 1]) + "," + Convert.ToString(array_data[i, 2]);
                     loggingFFT.write(logFFTmsg);
                 }
@@ -448,19 +453,32 @@ namespace Ayas_realTimeChart_ver1
 
                 chart2.Series[legend2].Points.AddXY(i, complexData_CH0[i].Magnitude);
 
-                if (complexData_CH0[i].Magnitude == complexDataAfter_CH0.Max())// 最大ノルムの確認
+                // 最大ノルムの確認
+                if (complexData_CH0[i].Magnitude == complexDataAfter_CH0.Max())
                 {
-                    MaxIndex = i;
+                    MaxIndex[0] = i;
+                }
+                if (complexData_CH1[i].Magnitude == complexDataAfter_CH1.Max())
+                {
+                    MaxIndex[1] = i;
+                }
+                if (complexData_CH2[i].Magnitude == complexDataAfter_CH2.Max())
+                {
+                    MaxIndex[2] = i;
+                }
+                if (complexData_CH3[i].Magnitude == complexDataAfter_CH3.Max())
+                {
+                    MaxIndex[3] = i;
                 }
             }
 
             label_samplingFrequency.Text = "sampling frequency：" + (1 / (samplingRate * N)) + "[Hz]";
             label_maxIndex.Text = "最大インデックス：" + Convert.ToString(MaxIndex);
-            label_maxFrequency.Text = "Max frequency：" + Convert.ToString(MaxIndex / (samplingRate * N)) + "[Hz]";
+            label_maxFrequency.Text = "Max frequency：" + Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "[Hz]";
 
             if (flag_log)
             {
-                loggingFFTresult.write(Convert.ToString(MaxIndex / (samplingRate * N)) + "," + complexData_CH0[MaxIndex].Magnitude + "," + samplingRate + "," + (1 / (samplingRate * N)) + "," + Convert.ToString(MaxIndex));
+                loggingFFTresult.write(Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + samplingRate + "," + (1 / (samplingRate * N)) + "," + Convert.ToString(MaxIndex));
                 
                 FFTimagefilename = imagefilepath + "FFTresult-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
                 Windowimagefilename = imagefilepath + "WINandRow-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";

@@ -41,7 +41,7 @@ namespace Ayas_realTimeChart_ver1
             stpw.Restart();
             writer = new System.IO.StreamWriter(@logfilename, true, System.Text.Encoding.Default);
             string tmp = null;
-            tmp += "Index,Frequency[Hz],Norm";//先頭行の表記
+            tmp += "Index,Frequency[Hz],Norm(CH0),Norm(CH1),Norm(CH2),Norm(CH3)";//先頭行の表記
             writer.WriteLine(tmp);
             return true;
         }
