@@ -75,8 +75,7 @@ namespace Ayas_realTimeChart_ver1
         string legendCH3 = "CH3";
 
         string legend2 = "complex data";
-        string legend3 = "row data";
-        string legend4 = "after windowFunc";
+        
         int displayTime = 10;// グラフに何秒間分のデータを表示するか(秒)
         private bool flag_zeroset = true;
 
@@ -275,11 +274,12 @@ namespace Ayas_realTimeChart_ver1
                     chart1.Series[CH].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
                     chart1.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
                 }
+                /***
                 chart1.Series[legendCH0].Color = Color.Orange;
                 chart1.Series[legendCH1].Color = Color.BlueViolet;
                 chart1.Series[legendCH2].Color = Color.DeepSkyBlue;
                 chart1.Series[legendCH3].Color = Color.Green;
-
+                ***/
             }
 
             catch { }
