@@ -35,9 +35,9 @@ namespace Ayas_realTimeChart_ver1
 
         }
 
-        public bool init()
+        public bool init(string filepath)
         {
-            logfilename = logfilepath + "FFT-log" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+            logfilename = filepath + "FFT-log" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
             stpw.Restart();
             writer = new System.IO.StreamWriter(@logfilename, true, System.Text.Encoding.Default);
             string tmp = null;
@@ -46,11 +46,11 @@ namespace Ayas_realTimeChart_ver1
             return true;
         }
 
-        public void write(string message)//messageはカンマ区切りでデータを記載すること
+        public void write(string filepath, string message)//messageはカンマ区切りでデータを記載すること
         {
             if (!nowlogging)//もし前ステップまでログをとっていなかったら、ログファイルの名前を新しくつける
             {
-                init();
+                init(filepath);
                 //Console.WriteLine("Now Logging to " + logfilename);
                 nowlogging = true;
             }

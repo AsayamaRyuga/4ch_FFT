@@ -16,7 +16,7 @@ namespace Ayas_realTimeChart_ver1
         string logfilename;
         //string currentDir = Environment.CurrentDirectory;
         //string file = currentDir + "\\" + initFileName; currentDir +"\\" + 
-        string logfilepath = "FFT_result/";//logファイルまでのパス
+        //string logfilepath = "FFT_result/";//"FFT_result/image_Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HHmm-ss") + "/";
         private bool nowlogging = false;
         //string digit = "f6";
 
@@ -25,9 +25,10 @@ namespace Ayas_realTimeChart_ver1
 
         }
 
-        public bool init()
+        public bool init(string filepath)
         {
-            logfilename = logfilepath + "FFTresult-log" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+            //logfilename = logfilepath + "FFTresult-log" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+            logfilename = filepath + "FFTresult-log" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
             stpw.Restart();
             writer = new System.IO.StreamWriter(@logfilename, true, System.Text.Encoding.Default);
             string tmp = null;
@@ -36,11 +37,11 @@ namespace Ayas_realTimeChart_ver1
             return true;
         }
 
-        public void write(string message)//messageはカンマ区切りでデータを記載すること
+        public void write(string filepath, string message)//messageはカンマ区切りでデータを記載すること
         {
             if (!nowlogging)//もし前ステップまでログをとっていなかったら、ログファイルの名前を新しくつける
             {
-                init();
+                init(filepath);
                 //Console.WriteLine("Now Logging to " + logfilename);
                 nowlogging = true;
             }

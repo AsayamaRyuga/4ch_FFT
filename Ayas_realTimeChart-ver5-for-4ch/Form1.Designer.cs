@@ -41,6 +41,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.button_Connect = new System.Windows.Forms.Button();
@@ -65,12 +68,14 @@
             this.comboBox_COM = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox_COM = new System.Windows.Forms.GroupBox();
+            this.chart_row = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox_log.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_windowFunc)).BeginInit();
             this.groupBox_COM.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_row)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
@@ -98,7 +103,7 @@
             this.chart1.Series.Add(series2);
             this.chart1.Series.Add(series3);
             this.chart1.Series.Add(series4);
-            this.chart1.Size = new System.Drawing.Size(461, 329);
+            this.chart1.Size = new System.Drawing.Size(683, 329);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
@@ -202,13 +207,13 @@
             this.chart_FFTmagnitude.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
             this.chart_FFTmagnitude.Legends.Add(legend2);
-            this.chart_FFTmagnitude.Location = new System.Drawing.Point(751, 9);
+            this.chart_FFTmagnitude.Location = new System.Drawing.Point(960, 9);
             this.chart_FFTmagnitude.Name = "chart_FFTmagnitude";
             series5.ChartArea = "ChartArea1";
             series5.Legend = "Legend1";
             series5.Name = "complex data";
             this.chart_FFTmagnitude.Series.Add(series5);
-            this.chart_FFTmagnitude.Size = new System.Drawing.Size(461, 329);
+            this.chart_FFTmagnitude.Size = new System.Drawing.Size(683, 329);
             this.chart_FFTmagnitude.TabIndex = 9;
             this.chart_FFTmagnitude.Text = "chart2";
             // 
@@ -301,7 +306,7 @@
             this.chart_windowFunc.ChartAreas.Add(chartArea3);
             legend3.Name = "Legend1";
             this.chart_windowFunc.Legends.Add(legend3);
-            this.chart_windowFunc.Location = new System.Drawing.Point(271, 344);
+            this.chart_windowFunc.Location = new System.Drawing.Point(960, 344);
             this.chart_windowFunc.Name = "chart_windowFunc";
             series6.ChartArea = "ChartArea1";
             series6.Legend = "Legend1";
@@ -344,11 +349,28 @@
             this.groupBox_COM.TabStop = false;
             this.groupBox_COM.Text = "waiting for select COM";
             // 
+            // chart_row
+            // 
+            chartArea4.Name = "ChartArea1";
+            this.chart_row.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.chart_row.Legends.Add(legend4);
+            this.chart_row.Location = new System.Drawing.Point(271, 344);
+            this.chart_row.Name = "chart_row";
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            this.chart_row.Series.Add(series7);
+            this.chart_row.Size = new System.Drawing.Size(683, 290);
+            this.chart_row.TabIndex = 19;
+            this.chart_row.Text = "chart3";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1224, 645);
+            this.ClientSize = new System.Drawing.Size(1655, 645);
+            this.Controls.Add(this.chart_row);
             this.Controls.Add(this.groupBox_COM);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.chart_windowFunc);
@@ -371,6 +393,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart_windowFunc)).EndInit();
             this.groupBox_COM.ResumeLayout(false);
             this.groupBox_COM.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_row)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -401,6 +424,7 @@
         private System.Windows.Forms.ComboBox comboBox_COM;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox_COM;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_row;
     }
 }
 

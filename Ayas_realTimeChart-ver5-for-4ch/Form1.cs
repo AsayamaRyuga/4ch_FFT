@@ -28,9 +28,6 @@ namespace Ayas_realTimeChart_ver1
 {
     public partial class Form1 : Form
     {
-        string imagefilepath = "FFT_result/";
-        string FFTimagefilename;
-        string Windowimagefilename;
 
         string message;//センサから送られてくるメッセージ格納用
         static Stopwatch sw = new Stopwatch();
@@ -38,19 +35,14 @@ namespace Ayas_realTimeChart_ver1
         private double[] ZeroData = new double[5];// センサゼロ値
         private double[] data = new double[5];// 初期値からの差分
 
-        
-
         // 計算用
         private int order = 5; //生データの小数を何桁目まで残すか．
 
         // フーリエ変換用
-        int N = 256;//2のべき乗であることを確認する。フーリエ変換の要素数 complexDataの要素数も同様に変更すること↓↓↓
+        int N = 1024;//2のべき乗であることを確認する。フーリエ変換の要素数 complexDataの要素数も同様に変更すること↓↓↓
+        private double[,] DataBox = new double[1024, 5];
+        private double[] timeAve = new double[1024];
         int dataPointNum = 0;// データの個数カウント用
-        
-        //private double[] complexDataBefore = new double[256];
-        //private double[] timeBefore = new double[256];
-        private double[,] DataBox = new double[256, 5];
-        private double[] timeAve = new double[256];
         int[] MaxIndex;// 最大ノルムのインデックスを格納する場所
 
         // 窓関数
@@ -63,6 +55,8 @@ namespace Ayas_realTimeChart_ver1
         }
 
         // ログ作成用
+        string filepath = "FFT_result/";
+        string makefilepath;
         static Logging logging = new Logging();
         static LoggingFFT loggingFFT = new LoggingFFT();
         static LoggingFFTresult loggingFFTresult = new LoggingFFTresult();
@@ -76,7 +70,7 @@ namespace Ayas_realTimeChart_ver1
 
         string legend2 = "complex data";
         
-        int displayTime = 10;// グラフに何秒間分のデータを表示するか(秒)
+        int displayTime = 20;// グラフに何秒間分のデータを表示するか(秒)
         private bool flag_zeroset = true;
 
         public Form1()
@@ -107,8 +101,11 @@ namespace Ayas_realTimeChart_ver1
                 chart1.ChartAreas[0].AxisY.Interval = 0.0125;// y軸のデータ表示間隔
 
                 serialPort1.Close();
+
                 this.Text = "Ayas RealTimeChart ver.5 for 4ch";// UIのタイトル設定
-                comboBox_windowFunc.SelectedIndex = 0;
+                
+                comboBox_windowFunc.SelectedIndex = 2;// 窓関数の初期設定
+                
                 sw.Stop(); 
             }
             catch{ }
@@ -145,9 +142,13 @@ namespace Ayas_realTimeChart_ver1
                     string CH = "CH" + Convert.ToString(i);
                     chart1.Series[CH].Points.Clear();
                 }
-                //chart1.Series[legendCH0].Points.Clear();
-                
+
                 chart_FFTmagnitude.Series[legend2].Points.Clear();
+
+                chart1.Titles.Clear();
+                chart_FFTmagnitude.Titles.Clear();
+                chart_windowFunc.Titles.Clear();
+
                 chart1.Titles.Add("Row data");// グラフのタイトル
                 chart_FFTmagnitude.Titles.Add("FFT");// グラフのタイトル
                 chart_windowFunc.Titles.Add("row & window Func");
@@ -214,14 +215,10 @@ namespace Ayas_realTimeChart_ver1
                     }
                     double time = Convert.ToDouble(strArrayData[0]);// 時間
 
-                    //complexDataBefore[dataPointNum] = data[1];//for debug
-                    //timeBefore[dataPointNum] = time;
-
                     DataBox[dataPointNum, 0] = time;
                     for (int i = 1; i < 5; i++)
                     {
                         DataBox[dataPointNum, i] = data[i];
-                        //label_rawData.Text = "CH" + i + " raw data(zero setted)：" + Convert.ToString(Math.Round(DataBox[dataPointNum, i], 3));
                     }
                     
 
@@ -231,7 +228,6 @@ namespace Ayas_realTimeChart_ver1
                     }
                     else
                     {
-                        //timeAve[dataPointNum] = timeBefore[dataPointNum] - timeBefore[dataPointNum - 1];
                         timeAve[dataPointNum] = DataBox[dataPointNum, 0] - DataBox[dataPointNum - 1, 0];
                     }
 
@@ -256,7 +252,7 @@ namespace Ayas_realTimeChart_ver1
                     if (flag_log)
                     {
                         string logmsg = strArrayData[1] + "," + strArrayData[2] + "," + strArrayData[3] + "," + strArrayData[4];// CSVファイルに書き込み
-                        logging.write(logmsg);
+                        logging.write(makefilepath + "/", logmsg);
                     }
                 }
 
@@ -265,7 +261,6 @@ namespace Ayas_realTimeChart_ver1
                     this.Invoke(new EventHandler(FFT));// FFT処理スレッドへ
                     dataPointNum = 0;// データの個数のカウントのリセット
                 }
-
                 
                 for (int i = 0; i < 4; i++)
                 {
@@ -274,12 +269,6 @@ namespace Ayas_realTimeChart_ver1
                     chart1.Series[CH].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
                     chart1.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
                 }
-                /***
-                chart1.Series[legendCH0].Color = Color.Orange;
-                chart1.Series[legendCH1].Color = Color.BlueViolet;
-                chart1.Series[legendCH2].Color = Color.DeepSkyBlue;
-                chart1.Series[legendCH3].Color = Color.Green;
-                ***/
             }
 
             catch { }
@@ -302,7 +291,8 @@ namespace Ayas_realTimeChart_ver1
         {
             flag_log = true;
             groupBox_log.Text = "Data Log (on)";
-
+            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HHmm-ss");// ディレクトリの作成
+            Directory.CreateDirectory(makefilepath);
         }
 
         private void button_logoff_Click(object sender, EventArgs e)
@@ -316,7 +306,8 @@ namespace Ayas_realTimeChart_ver1
 
         private void FFT(object sender, EventArgs e)
         {
-            MaxIndex = new int[4];
+            MaxIndex = new int[4];// センサから送られてくるデータの数
+            List<double> maxMagnitude = new List<double>();
             Complex[] complexData_CH0 = new Complex[N];
             Complex[] complexData_CH1 = new Complex[N];
             Complex[] complexData_CH2 = new Complex[N];
@@ -345,37 +336,42 @@ namespace Ayas_realTimeChart_ver1
             double CH2_Ave = CH2_data.Average();
             double CH3_Ave = CH3_data.Average();
 
-            // FFTグラフの描画設定
-            chart_FFTmagnitude.Series.Clear();
-            chart_FFTmagnitude.Series.Add(legend2);
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Title = "Index";
-            chart_FFTmagnitude.ChartAreas[0].AxisY.Title = "Norm";
-            chart_FFTmagnitude.Series[legend2].IsVisibleInLegend = false;// 凡例表示設定
-            chart_FFTmagnitude.Series[legend2].IsValueShownAsLabel = false;// データラベル表示設定
-            chart_FFTmagnitude.Series[legend2].ChartType = SeriesChartType.Column;// 棒グラフを指定
-            //chart2.Series[legend2].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Maximum = N / 2;
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Minimum = 0;
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Interval = N / 8;
-
-            // FFT前のグラフの描画設定
+            chart_row.Series.Clear();
             chart_windowFunc.Series.Clear();
+            chart_FFTmagnitude.Series.Clear();
+
             for (int i = 0; i < 4; i++)
             {
                 string CH = "CH" + Convert.ToString(i);
+
+                chart_row.Series.Add(CH);
+                chart_row.Series[CH].IsValueShownAsLabel = false;
+                chart_row.Series[CH].ChartType = SeriesChartType.Line;
+                chart_row.Series[CH].BorderWidth = 2;
+
+                chart_FFTmagnitude.Series.Add(CH);
+                chart_FFTmagnitude.Series[CH].IsValueShownAsLabel = false;
+                //chart_FFTmagnitude.Series[CH].ChartType = SeriesChartType.Column;// 棒グラフを指定
+                chart_FFTmagnitude.Series[CH].ChartType = SeriesChartType.Line;
+
                 chart_windowFunc.Series.Add(CH);
                 chart_windowFunc.Series[CH].IsValueShownAsLabel = false;// データラベル表示設定
                 chart_windowFunc.Series[CH].ChartType = SeriesChartType.Line;
                 chart_windowFunc.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
             }
-            //chart_windowFunc.Series.Add(legendch);
-            
+
+            // 窓関数グラフの描画設定
             chart_windowFunc.ChartAreas[0].AxisX.Title = "Index";
             chart_windowFunc.ChartAreas[0].AxisY.Title = "Inductance[μH]";
             chart_windowFunc.ChartAreas[0].AxisX.Minimum = 0;
             chart_windowFunc.ChartAreas[0].AxisX.Interval = N / 8;
 
-            
+            // FFTグラフの描画設定
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Title = "Index";
+            chart_FFTmagnitude.ChartAreas[0].AxisY.Title = "Norm";
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Maximum = N / 2;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Minimum = 0;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Interval = N / 8;
 
             // ゼロ調整＆複素数データ変換
             for (int i = 0; i < N; i++)
@@ -419,14 +415,22 @@ namespace Ayas_realTimeChart_ver1
                 complexData_CH2[i] = new Complex(CH2_data[i] * winValue, 0);
                 complexData_CH3[i] = new Complex(CH3_data[i] * winValue, 0);
 
+                chart_row.Series[legendCH0].Points.AddXY(i, CH0_data[i]);
+                chart_row.Series[legendCH1].Points.AddXY(i, CH1_data[i]);
+                chart_row.Series[legendCH2].Points.AddXY(i, CH2_data[i]);
+                chart_row.Series[legendCH3].Points.AddXY(i, CH3_data[i]);
+
                 chart_windowFunc.Series[legendCH0].Points.AddXY(i, CH0_data[i] * winValue);
                 chart_windowFunc.Series[legendCH1].Points.AddXY(i, CH1_data[i] * winValue);
                 chart_windowFunc.Series[legendCH2].Points.AddXY(i, CH2_data[i] * winValue);
                 chart_windowFunc.Series[legendCH3].Points.AddXY(i, CH3_data[i] * winValue);
             }
 
+            chart_row.Titles.Clear();
+            chart_row.Titles.Add("row data");
+
             chart_windowFunc.Titles.Clear();
-            chart_windowFunc.Titles.Add("row & " + comboBox_windowFunc.SelectedItem.ToString());
+            chart_windowFunc.Titles.Add(comboBox_windowFunc.SelectedItem.ToString());
 
             /*****フーリエ変換実行（FFT）*****/
             Fourier.Forward(complexData_CH0, FourierOptions.Default);
@@ -434,7 +438,7 @@ namespace Ayas_realTimeChart_ver1
             Fourier.Forward(complexData_CH2, FourierOptions.Default);
             Fourier.Forward(complexData_CH3, FourierOptions.Default);
 
-            // グラフ描画＆logの記録
+            // FFTグラフ描画＆logの記録
             for (int i = 0; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
             {
                 if (flag_log)
@@ -445,7 +449,7 @@ namespace Ayas_realTimeChart_ver1
                         + "," + Convert.ToString(complexData_CH2[i].Magnitude)
                         + "," + Convert.ToString(complexData_CH3[i].Magnitude);
                     //string logFFTmsg = Convert.ToString(array_data[i, 1]) + "," + Convert.ToString(array_data[i, 2]);
-                    loggingFFT.write(logFFTmsg);
+                    loggingFFT.write(makefilepath + "/", logFFTmsg);
                 }
 
                 //label_Free3.Text = frequency + "[Hz] , " + Convert.ToString(complexData[i].Magnitude);
@@ -454,7 +458,10 @@ namespace Ayas_realTimeChart_ver1
                 complexDataAfter_CH2[i] = complexData_CH2[i].Magnitude;
                 complexDataAfter_CH3[i] = complexData_CH3[i].Magnitude;
 
-                chart_FFTmagnitude.Series[legend2].Points.AddXY(i, complexData_CH1[i].Magnitude);
+                chart_FFTmagnitude.Series[legendCH0].Points.AddXY(i, complexData_CH0[i].Magnitude);
+                chart_FFTmagnitude.Series[legendCH1].Points.AddXY(i, complexData_CH1[i].Magnitude);
+                chart_FFTmagnitude.Series[legendCH2].Points.AddXY(i, complexData_CH2[i].Magnitude);
+                chart_FFTmagnitude.Series[legendCH3].Points.AddXY(i, complexData_CH3[i].Magnitude);
             }
 
             // 最大ノルムの確認
@@ -464,6 +471,7 @@ namespace Ayas_realTimeChart_ver1
                 if (complexData_CH0[i].Magnitude == complexDataAfter_CH0.Max())
                 {
                     MaxIndex[0] = i;
+                    maxMagnitude.Add(complexDataAfter_CH0.Max());
                 }
             }
             for (int i = 0; i < N / 2; i++)
@@ -471,6 +479,7 @@ namespace Ayas_realTimeChart_ver1
                 if (complexData_CH1[i].Magnitude == complexDataAfter_CH1.Max())
                 {
                     MaxIndex[1] = i;
+                    maxMagnitude.Add(complexDataAfter_CH1.Max());
                 }
             }
             for (int i = 0; i < N / 2; i++)
@@ -478,6 +487,7 @@ namespace Ayas_realTimeChart_ver1
                 if (complexData_CH2[i].Magnitude == complexDataAfter_CH2.Max())
                 {
                     MaxIndex[2] = i;
+                    maxMagnitude.Add(complexDataAfter_CH2.Max());
                 }
             }
             for (int i = 0; i < N / 2; i++)
@@ -485,6 +495,7 @@ namespace Ayas_realTimeChart_ver1
                 if (complexData_CH3[i].Magnitude == complexDataAfter_CH3.Max())
                 {
                     MaxIndex[3] = i;
+                    maxMagnitude.Add(complexDataAfter_CH3.Max());
                 }
             }
 
@@ -496,29 +507,33 @@ namespace Ayas_realTimeChart_ver1
             if (flag_log)
             {
                 //"date,CH0 max Frequency[Hz],CH1 max Frequency[Hz],CH2 max Frequency[Hz],CH3 max Frequency[Hz],CH0 Norm,CH1 Norm,CH2 Norm,CH3 Norm,CH0 MaxIndex,CH1 MaxIndex,CH2 MaxIndex,CH3 MaxIndex,time interval(Ave) ,sampling frequency[Hz]"
-                loggingFFTresult.write(Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[3] / (samplingRate * N))
+                loggingFFTresult.write(makefilepath + "/",Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[3] / (samplingRate * N))
                     + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + complexData_CH0[MaxIndex[1]].Magnitude + "," + complexData_CH0[MaxIndex[2]].Magnitude + "," + complexData_CH0[MaxIndex[3]].Magnitude
                     + "," + Convert.ToString(MaxIndex[0]) + "," + Convert.ToString(MaxIndex[1]) + "," + Convert.ToString(MaxIndex[2]) + "," + Convert.ToString(MaxIndex[3])
                     + "," + samplingRate + "," + (1 / (samplingRate * N)));
-                
-                FFTimagefilename = imagefilepath + "FFTresult-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
-                Windowimagefilename = imagefilepath + "WINandRow-chart-" + DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
+
+                string date = DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
+                this.Text = "Ayas RealTimeChart ver.5 for 4ch    " + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");// UIのタイトル設定
+
+                //コントロールの外観を描画するBitmapの作成
+                Bitmap bmp = new Bitmap(this.Width, this.Height);
+                //キャプチャする
+                this.DrawToBitmap(bmp, new Rectangle(0, 0, this.Width, this.Height));
+                //ファイルに保存する
+                bmp.Save(makefilepath + "/All-chart-" + date);
+                //後始末
+                bmp.Dispose();
+
+                /***
+                FFTimagefilename = makefilepath + "/FFTresult-chart-" + date;
+                Windowimagefilename = makefilepath + "/WINandRow-chart-" + date;
+                Rowimagefilename = makefilepath + "/rowdata-chart-" + date;
 
                 chart_FFTmagnitude.SaveImage(FFTimagefilename, ChartImageFormat.Jpeg);// FFT後のグラフ保存
-                chart_windowFunc.SaveImage(Windowimagefilename, ChartImageFormat.Jpeg);// 生データと窓関数を掛けた後のグラフの保存
-
+                chart_windowFunc.SaveImage(Windowimagefilename, ChartImageFormat.Jpeg);// 窓関数を掛けた後のグラフの保存
+                chart_row.SaveImage(Rowimagefilename, ChartImageFormat.Jpeg);// 生データ画像の保存
+                ***/
             }
-
-            if (checkBox_FFT_Yaxis_Fixed.Checked)// グラフの最大値設定
-            {
-                chart_FFTmagnitude.ChartAreas[0].AxisY.Maximum = 0.1;
-            }
-            else
-            {
-                chart_FFTmagnitude.ChartAreas[0].AxisY.Maximum = complexDataAfter_CH0.Max();
-            }
-
-            
         }
     }
 }
