@@ -26,7 +26,7 @@ namespace Ayas_realTimeChart_ver1
         string logfilename;
         //string currentDir = Environment.CurrentDirectory;
         //string file = currentDir + "\\" + initFileName; currentDir +"\\" + 
-        string logfilepath = "log_tactilesensor/";//logファイルまでのパス
+        //string logfilepath = "log_tactilesensor/";//logファイルまでのパス
         private bool nowlogging = false;
         string digit = "f6";
 

@@ -359,6 +359,11 @@ namespace Ayas_realTimeChart_ver1
                 chart_windowFunc.Series[CH].ChartType = SeriesChartType.Line;
                 chart_windowFunc.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
             }
+            // 生データグラフの描画設定
+            chart_row.ChartAreas[0].AxisX.Title = "Index";
+            chart_row.ChartAreas[0].AxisY.Title = "Inductance[μH]";
+            chart_row.ChartAreas[0].AxisX.Minimum = 0;
+            chart_row.ChartAreas[0].AxisX.Interval = N / 8;
 
             // 窓関数グラフの描画設定
             chart_windowFunc.ChartAreas[0].AxisX.Title = "Index";
