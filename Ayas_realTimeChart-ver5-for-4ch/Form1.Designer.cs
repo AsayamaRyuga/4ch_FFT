@@ -369,7 +369,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1655, 645);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(1679, 645);
             this.Controls.Add(this.chart_row);
             this.Controls.Add(this.groupBox_COM);
             this.Controls.Add(this.label1);

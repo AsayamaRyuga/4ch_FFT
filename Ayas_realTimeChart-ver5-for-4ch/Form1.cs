@@ -70,7 +70,7 @@ namespace Ayas_realTimeChart_ver1
 
         string legend2 = "complex data";
         
-        int displayTime = 20;// グラフに何秒間分のデータを表示するか(秒)
+        int displayTime = 10;// グラフに何秒間分のデータを表示するか(秒)
         private bool flag_zeroset = true;
 
         public Form1()
