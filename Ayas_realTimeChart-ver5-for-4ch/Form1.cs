@@ -115,7 +115,7 @@ namespace Ayas_realTimeChart_ver1
         {
             try
             {
-                message = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 1)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
+                message = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency　* 1000, 5)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
                 this.Invoke(new EventHandler(DisplayText));
                 this.Invoke(new EventHandler(showChart));
             }
@@ -215,7 +215,7 @@ namespace Ayas_realTimeChart_ver1
                     }
                     double time = Convert.ToDouble(strArrayData[0]);// 時間
 
-                    DataBox[dataPointNum, 0] = time;
+                    DataBox[dataPointNum, 0] = time;// [ms]表示
                     for (int i = 1; i < 5; i++)
                     {
                         DataBox[dataPointNum, i] = data[i];
@@ -233,11 +233,21 @@ namespace Ayas_realTimeChart_ver1
 
                     //label_rawData.Text = "raw data(zero setted)：" + Convert.ToString(Math.Round(complexDataBefore[dataPointNum], 3));
                     
-
-                    for (int i = 0; i < 4; i++)
+                    if (checkBox_CH0.Checked)
                     {
-                        string CH = "CH" + Convert.ToString(i);
-                        chart1.Series[CH].Points.AddXY(time, data[i+1]);
+                        chart1.Series[legendCH0].Points.AddXY(time / 1000, data[1]);
+                    }
+                    if (checkBox_CH1.Checked)
+                    {
+                        chart1.Series[legendCH1].Points.AddXY(time / 1000, data[2]);
+                    }
+                    if (checkBox_CH2.Checked)
+                    {
+                        chart1.Series[legendCH2].Points.AddXY(time / 1000, data[3]);
+                    }
+                    if (checkBox_CH3.Checked)
+                    {
+                        chart1.Series[legendCH3].Points.AddXY(time / 1000, data[4]);
                     }
 
                     // データの個数カウント
@@ -419,12 +429,15 @@ namespace Ayas_realTimeChart_ver1
                 complexData_CH1[i] = new Complex(CH1_data[i] * winValue, 0);
                 complexData_CH2[i] = new Complex(CH2_data[i] * winValue, 0);
                 complexData_CH3[i] = new Complex(CH3_data[i] * winValue, 0);
-
-                chart_row.Series[legendCH0].Points.AddXY(i, CH0_data[i]);
-                chart_row.Series[legendCH1].Points.AddXY(i, CH1_data[i]);
-                chart_row.Series[legendCH2].Points.AddXY(i, CH2_data[i]);
-                chart_row.Series[legendCH3].Points.AddXY(i, CH3_data[i]);
-
+                
+                if (checkBox_showChart.Checked)
+                {
+                    chart_row.Series[legendCH0].Points.AddXY(i, CH0_data[i]);
+                    chart_row.Series[legendCH1].Points.AddXY(i, CH1_data[i]);
+                    chart_row.Series[legendCH2].Points.AddXY(i, CH2_data[i]);
+                    chart_row.Series[legendCH3].Points.AddXY(i, CH3_data[i]);
+                }
+                
                 chart_windowFunc.Series[legendCH0].Points.AddXY(i, CH0_data[i] * winValue);
                 chart_windowFunc.Series[legendCH1].Points.AddXY(i, CH1_data[i] * winValue);
                 chart_windowFunc.Series[legendCH2].Points.AddXY(i, CH2_data[i] * winValue);
