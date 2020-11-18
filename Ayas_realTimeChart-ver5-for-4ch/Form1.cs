@@ -45,15 +45,6 @@ namespace Ayas_realTimeChart_ver1
         int dataPointNum = 0;// データの個数カウント用
         int[] MaxIndex;// 最大ノルムのインデックスを格納する場所
 
-        // 窓関数
-        public enum WindowFunc
-        {
-            Hamming,
-            Hanning,
-            Blackman,
-            Rectangular
-        }
-
         // ログ作成用
         string filepath = "FFT_result/";
         string makefilepath;
@@ -67,16 +58,13 @@ namespace Ayas_realTimeChart_ver1
         string legendCH1 = "CH1";
         string legendCH2 = "CH2";
         string legendCH3 = "CH3";
-
-        string legend2 = "complex data";
-        
         int displayTime = 10;// グラフに何秒間分のデータを表示するか(秒)
         private bool flag_zeroset = true;
 
         public Form1()
         {
             InitializeComponent();
-            comboBox_windowFunc.Items.AddRange(new string[] { "Rectangular", "Hamming", "Hanning", "Blackman"});
+            comboBox_windowFunc.Items.AddRange(new string[] { "Rectangular", "Hamming", "Hanning", "Blackman"});// 窓関数をコンボボックスに格納
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -94,11 +82,11 @@ namespace Ayas_realTimeChart_ver1
                     comboBox_COM.SelectedIndex = 0;
                 }
                 // グラフの描画設定
-                chart1.ChartAreas[0].AxisX.Title = "time[s]";
-                chart1.ChartAreas[0].AxisY.Title = "Inductance[μH]";
-                chart1.ChartAreas[0].AxisY.Maximum = 0.05;// Y軸の最大値指定
-                chart1.ChartAreas[0].AxisY.Minimum = -0.0125;// Y軸の最小値指定
-                chart1.ChartAreas[0].AxisY.Interval = 0.0125;// y軸のデータ表示間隔
+                chart_realtime.ChartAreas[0].AxisX.Title = "time[s]";
+                chart_realtime.ChartAreas[0].AxisY.Title = "Inductance[μH]";
+                chart_realtime.ChartAreas[0].AxisY.Maximum = 0.05;// Y軸の最大値指定
+                chart_realtime.ChartAreas[0].AxisY.Minimum = -0.0125;// Y軸の最小値指定
+                chart_realtime.ChartAreas[0].AxisY.Interval = 0.0125;// y軸のデータ表示間隔
 
                 serialPort1.Close();
 
@@ -115,8 +103,11 @@ namespace Ayas_realTimeChart_ver1
         {
             try
             {
-                message = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency　* 1000, 5)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
-                this.Invoke(new EventHandler(DisplayText));
+                message = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 6)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
+                if (checkBox_serialport.Checked)
+                {
+                    this.Invoke(new EventHandler(DisplayText));
+                }
                 this.Invoke(new EventHandler(showChart));
             }
             catch { }                                
@@ -140,16 +131,14 @@ namespace Ayas_realTimeChart_ver1
                 for (int i = 0; i <4; i++)
                 {
                     string CH = "CH" + Convert.ToString(i);
-                    chart1.Series[CH].Points.Clear();
+                    chart_realtime.Series[CH].Points.Clear();
                 }
 
-                chart_FFTmagnitude.Series[legend2].Points.Clear();
-
-                chart1.Titles.Clear();
+                chart_realtime.Titles.Clear();
                 chart_FFTmagnitude.Titles.Clear();
                 chart_windowFunc.Titles.Clear();
 
-                chart1.Titles.Add("Row data");// グラフのタイトル
+                chart_realtime.Titles.Add("Row data");// グラフのタイトル
                 chart_FFTmagnitude.Titles.Add("FFT");// グラフのタイトル
                 chart_windowFunc.Titles.Add("row & window Func");
             }
@@ -176,11 +165,25 @@ namespace Ayas_realTimeChart_ver1
                 MessageBox.Show(ex.Message);
             }
         }
+        private void button_chartClear_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    string CH = "CH" + Convert.ToString(i);
+                    chart_realtime.Series[CH].Points.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
         private void DisplayText(object sender, EventArgs e)
         {
             textBox1.AppendText(message + Environment.NewLine);
-            
         }
 
         private void showChart(object sender, EventArgs e)
@@ -215,7 +218,7 @@ namespace Ayas_realTimeChart_ver1
                     }
                     double time = Convert.ToDouble(strArrayData[0]);// 時間
 
-                    DataBox[dataPointNum, 0] = time;// [ms]表示
+                    DataBox[dataPointNum, 0] = time;// [s]表示
                     for (int i = 1; i < 5; i++)
                     {
                         DataBox[dataPointNum, i] = data[i];
@@ -232,22 +235,24 @@ namespace Ayas_realTimeChart_ver1
                     }
 
                     //label_rawData.Text = "raw data(zero setted)：" + Convert.ToString(Math.Round(complexDataBefore[dataPointNum], 3));
+
+                    //chart1.Series[legendCH0].Points.AddXY(time, data[1]);
                     
                     if (checkBox_CH0.Checked)
                     {
-                        chart1.Series[legendCH0].Points.AddXY(time / 1000, data[1]);
+                        chart_realtime.Series[legendCH0].Points.AddXY(time, data[1]);
                     }
                     if (checkBox_CH1.Checked)
                     {
-                        chart1.Series[legendCH1].Points.AddXY(time / 1000, data[2]);
+                        chart_realtime.Series[legendCH1].Points.AddXY(time, data[2]);
                     }
                     if (checkBox_CH2.Checked)
                     {
-                        chart1.Series[legendCH2].Points.AddXY(time / 1000, data[3]);
+                        chart_realtime.Series[legendCH2].Points.AddXY(time, data[3]);
                     }
                     if (checkBox_CH3.Checked)
                     {
-                        chart1.Series[legendCH3].Points.AddXY(time / 1000, data[4]);
+                        chart_realtime.Series[legendCH3].Points.AddXY(time, data[4]);
                     }
 
                     // データの個数カウント
@@ -255,13 +260,13 @@ namespace Ayas_realTimeChart_ver1
                     label_Free.Text = "point num:" + dataPointNum;
 
                     // グラフの横軸の表示範囲設定
-                    chart1.ChartAreas[0].AxisX.Maximum = time;
-                    chart1.ChartAreas[0].AxisX.Minimum = time - displayTime;// 何秒前のデータまで表示するか
+                    chart_realtime.ChartAreas[0].AxisX.Maximum = time;
+                    chart_realtime.ChartAreas[0].AxisX.Minimum = time - displayTime;// 何秒前のデータまで表示するか
 
                     // logの作成
                     if (flag_log)
                     {
-                        string logmsg = strArrayData[1] + "," + strArrayData[2] + "," + strArrayData[3] + "," + strArrayData[4];// CSVファイルに書き込み
+                        string logmsg = strArrayData[0] + "," + strArrayData[1] + "," + strArrayData[2] + "," + strArrayData[3] + "," + strArrayData[4];// CSVファイルに書き込み
                         logging.write(makefilepath + "/", logmsg);
                     }
                 }
@@ -275,9 +280,9 @@ namespace Ayas_realTimeChart_ver1
                 for (int i = 0; i < 4; i++)
                 {
                     string CH = "CH" + Convert.ToString(i);
-                    chart1.Series[CH].IsValueShownAsLabel = false;// データラベル表示設定
-                    chart1.Series[CH].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
-                    chart1.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
+                    chart_realtime.Series[CH].IsValueShownAsLabel = false;// データラベル表示設定
+                    chart_realtime.Series[CH].ChartType = SeriesChartType.Line;// 折れ線グラフを指定
+                    chart_realtime.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
                 }
             }
 
@@ -301,7 +306,7 @@ namespace Ayas_realTimeChart_ver1
         {
             flag_log = true;
             groupBox_log.Text = "Data Log (on)";
-            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HHmm-ss");// ディレクトリの作成
+            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");// ディレクトリの作成
             Directory.CreateDirectory(makefilepath);
         }
 
@@ -358,6 +363,7 @@ namespace Ayas_realTimeChart_ver1
                 chart_row.Series[CH].IsValueShownAsLabel = false;
                 chart_row.Series[CH].ChartType = SeriesChartType.Line;
                 chart_row.Series[CH].BorderWidth = 2;
+                chart_row.Series[CH].IsVisibleInLegend = false;// 凡例表示設定
 
                 chart_FFTmagnitude.Series.Add(CH);
                 chart_FFTmagnitude.Series[CH].IsValueShownAsLabel = false;
@@ -368,6 +374,7 @@ namespace Ayas_realTimeChart_ver1
                 chart_windowFunc.Series[CH].IsValueShownAsLabel = false;// データラベル表示設定
                 chart_windowFunc.Series[CH].ChartType = SeriesChartType.Line;
                 chart_windowFunc.Series[CH].BorderWidth = 2;// 折れ線グラフの幅を指定
+                chart_row.Series[CH].IsVisibleInLegend = false;// 凡例表示設定
             }
             // 生データグラフの描画設定
             chart_row.ChartAreas[0].AxisX.Title = "Index";
@@ -430,7 +437,7 @@ namespace Ayas_realTimeChart_ver1
                 complexData_CH2[i] = new Complex(CH2_data[i] * winValue, 0);
                 complexData_CH3[i] = new Complex(CH3_data[i] * winValue, 0);
                 
-                if (checkBox_showChart.Checked)
+                if (checkBox_showrowChart.Checked)
                 {
                     chart_row.Series[legendCH0].Points.AddXY(i, CH0_data[i]);
                     chart_row.Series[legendCH1].Points.AddXY(i, CH1_data[i]);
@@ -530,9 +537,19 @@ namespace Ayas_realTimeChart_ver1
                     + "," + Convert.ToString(MaxIndex[0]) + "," + Convert.ToString(MaxIndex[1]) + "," + Convert.ToString(MaxIndex[2]) + "," + Convert.ToString(MaxIndex[3])
                     + "," + samplingRate + "," + (1 / (samplingRate * N)));
 
-                string date = DateTime.Now.ToString("yyyyMMdd-HHmm-ss") + ".Jpeg";
-                this.Text = "Ayas RealTimeChart ver.5 for 4ch    " + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");// UIのタイトル設定
+                string date = DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");
+                label_date.Text = date;
 
+                //コントロールの外観を描画するBitmapの作成
+                Bitmap bmp = new Bitmap(panel1.Width, panel1.Height);
+                //キャプチャする
+                panel1.DrawToBitmap(bmp, new Rectangle(0, 0, panel1.Width, panel1.Height));
+                //ファイルに保存する
+                bmp.Save(makefilepath + "/All-chart-" + date + ".Jpeg");
+                //後始末
+                bmp.Dispose();
+
+                /***
                 //コントロールの外観を描画するBitmapの作成
                 Bitmap bmp = new Bitmap(this.Width, this.Height);
                 //キャプチャする
@@ -553,5 +570,7 @@ namespace Ayas_realTimeChart_ver1
                 ***/
             }
         }
+
+        
     }
 }
