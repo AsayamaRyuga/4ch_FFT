@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7D577DE4-6315-4343-8375-5BBEA514963C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Ayas_realTimeChart_ver1</RootNamespace>
-    <AssemblyName>Ayas_realTimeChart-ver1</AssemblyName>
+    <RootNamespace>coil_4ch_FFT</RootNamespace>
+    <AssemblyName>coil_4ch_FFT</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -70,6 +70,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

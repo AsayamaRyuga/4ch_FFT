@@ -1,4 +1,4 @@
-﻿namespace Ayas_realTimeChart_ver1
+﻿namespace coil_4ch_FFT_ver1
 {
     partial class Form1
     {
@@ -121,7 +121,7 @@
             // 
             // button_Connect
             // 
-            this.button_Connect.Location = new System.Drawing.Point(135, 44);
+            this.button_Connect.Location = new System.Drawing.Point(135, 103);
             this.button_Connect.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_Connect.Name = "button_Connect";
             this.button_Connect.Size = new System.Drawing.Size(77, 25);
@@ -132,7 +132,7 @@
             // 
             // button_Disconnect
             // 
-            this.button_Disconnect.Location = new System.Drawing.Point(216, 44);
+            this.button_Disconnect.Location = new System.Drawing.Point(216, 103);
             this.button_Disconnect.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_Disconnect.Name = "button_Disconnect";
             this.button_Disconnect.Size = new System.Drawing.Size(77, 25);
@@ -154,11 +154,11 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("MS UI Gothic", 6F);
-            this.textBox1.Location = new System.Drawing.Point(6, 195);
+            this.textBox1.Location = new System.Drawing.Point(6, 158);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(249, 44);
+            this.textBox1.Size = new System.Drawing.Size(249, 83);
             this.textBox1.TabIndex = 4;
             // 
             // serialPort1
@@ -192,11 +192,12 @@
             // 
             this.groupBox_log.Controls.Add(this.button_logoff);
             this.groupBox_log.Controls.Add(this.button_logon);
-            this.groupBox_log.Location = new System.Drawing.Point(6, 87);
+            this.groupBox_log.Controls.Add(this.checkBox_zeroset);
+            this.groupBox_log.Location = new System.Drawing.Point(8, 48);
             this.groupBox_log.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox_log.Name = "groupBox_log";
             this.groupBox_log.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox_log.Size = new System.Drawing.Size(113, 47);
+            this.groupBox_log.Size = new System.Drawing.Size(188, 47);
             this.groupBox_log.TabIndex = 7;
             this.groupBox_log.TabStop = false;
             this.groupBox_log.Text = "Data Log (off)";
@@ -206,7 +207,7 @@
             this.checkBox_zeroset.AutoSize = true;
             this.checkBox_zeroset.Checked = true;
             this.checkBox_zeroset.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_zeroset.Location = new System.Drawing.Point(123, 108);
+            this.checkBox_zeroset.Location = new System.Drawing.Point(116, 21);
             this.checkBox_zeroset.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox_zeroset.Name = "checkBox_zeroset";
             this.checkBox_zeroset.Size = new System.Drawing.Size(64, 16);
@@ -332,7 +333,7 @@
             // 
             this.comboBox_COM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_COM.FormattingEnabled = true;
-            this.comboBox_COM.Location = new System.Drawing.Point(6, 46);
+            this.comboBox_COM.Location = new System.Drawing.Point(6, 105);
             this.comboBox_COM.Name = "comboBox_COM";
             this.comboBox_COM.Size = new System.Drawing.Size(124, 20);
             this.comboBox_COM.TabIndex = 16;
@@ -357,7 +358,6 @@
             this.groupBox_COM.Controls.Add(this.button_Disconnect);
             this.groupBox_COM.Controls.Add(this.groupBox_log);
             this.groupBox_COM.Controls.Add(this.label_testname);
-            this.groupBox_COM.Controls.Add(this.checkBox_zeroset);
             this.groupBox_COM.Location = new System.Drawing.Point(11, 6);
             this.groupBox_COM.Name = "groupBox_COM";
             this.groupBox_COM.Size = new System.Drawing.Size(298, 325);
@@ -369,13 +369,13 @@
             // 
             this.textBox_testname.Location = new System.Drawing.Point(101, 21);
             this.textBox_testname.Name = "textBox_testname";
-            this.textBox_testname.Size = new System.Drawing.Size(111, 19);
+            this.textBox_testname.Size = new System.Drawing.Size(191, 19);
             this.textBox_testname.TabIndex = 21;
             // 
             // checkBox_serialport
             // 
             this.checkBox_serialport.AutoSize = true;
-            this.checkBox_serialport.Location = new System.Drawing.Point(7, 173);
+            this.checkBox_serialport.Location = new System.Drawing.Point(7, 136);
             this.checkBox_serialport.Name = "checkBox_serialport";
             this.checkBox_serialport.Size = new System.Drawing.Size(106, 16);
             this.checkBox_serialport.TabIndex = 20;
@@ -506,6 +506,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart_realtime)).EndInit();
             this.groupBox_log.ResumeLayout(false);
+            this.groupBox_log.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

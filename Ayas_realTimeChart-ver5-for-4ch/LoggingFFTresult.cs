@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;//for stopwatch
 
-namespace Ayas_realTimeChart_ver1
+namespace coil_4ch_FFT_ver1
 {
     class LoggingFFTresult
     {

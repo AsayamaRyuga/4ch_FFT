@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Ayas_realTimeChart_ver1
+namespace coil_4ch_FFT_ver1
 {
     static class Program
     {

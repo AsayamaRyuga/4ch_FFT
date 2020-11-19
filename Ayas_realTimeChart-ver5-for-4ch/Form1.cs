@@ -24,7 +24,7 @@ using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
 using System.IO.Ports;
 
-namespace Ayas_realTimeChart_ver1
+namespace coil_4ch_FFT_ver1
 {
     public partial class Form1 : Form
     {
@@ -210,11 +210,17 @@ namespace Ayas_realTimeChart_ver1
                         }
                     }
 
-                    // 読み込んだデータの格納(1行のみ）
+                    // 読み込んだデータの格納(1行のみ、時間以外）
                     for (int i = 1; i < strArrayData.Length; i++)
                     {
                         originalData[i] = Math.Round(Convert.ToDouble(strArrayData[i]), order);// 小数第５位までに四捨五入
                         data[i] = originalData[i] - ZeroData[i];// ゼロ点からの差分をデータとする
+
+                        // フィルタリング処理
+                        if (data[i] < 0.00005)
+                        {
+                            data[i] = 0;
+                        }
                     }
                     double time = Convert.ToDouble(strArrayData[0]);// 時間
 
@@ -541,7 +547,7 @@ namespace Ayas_realTimeChart_ver1
                 //キャプチャする
                 panel1.DrawToBitmap(bmp, new Rectangle(0, 0, panel1.Width, panel1.Height));
                 //ファイルに保存する
-                bmp.Save(makefilepath + "/All-chart-" + date + ".Jpeg");
+                bmp.Save(makefilepath + "/chart-" + date + ".Jpeg");
                 //後始末
                 bmp.Dispose();
 
