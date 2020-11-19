@@ -108,7 +108,7 @@ namespace coil_4ch_FFT_ver1
                 {
                     this.Invoke(new EventHandler(DisplayText));
                 }
-                this.Invoke(new EventHandler(showChart));
+                this.Invoke(new EventHandler(store_data));
             }
             catch { }                                
         }
@@ -186,7 +186,7 @@ namespace coil_4ch_FFT_ver1
             textBox1.AppendText(message + Environment.NewLine);
         }
 
-        private void showChart(object sender, EventArgs e)
+        private void store_data(object sender, EventArgs e)
         {
             try
             {
@@ -571,6 +571,12 @@ namespace coil_4ch_FFT_ver1
                 chart_row.SaveImage(Rowimagefilename, ChartImageFormat.Jpeg);// 生データ画像の保存
                 ***/
             }
+        }
+
+        private void filter()
+        {
+
+            return;
         }
 
         
