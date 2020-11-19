@@ -233,10 +233,6 @@ namespace Ayas_realTimeChart_ver1
                     {
                         timeAve[dataPointNum] = DataBox[dataPointNum, 0] - DataBox[dataPointNum - 1, 0];
                     }
-
-                    //label_rawData.Text = "raw data(zero setted)：" + Convert.ToString(Math.Round(complexDataBefore[dataPointNum], 3));
-
-                    //chart1.Series[legendCH0].Points.AddXY(time, data[1]);
                     
                     if (checkBox_CH0.Checked)
                     {
@@ -306,7 +302,7 @@ namespace Ayas_realTimeChart_ver1
         {
             flag_log = true;
             groupBox_log.Text = "Data Log (on)";
-            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");// ディレクトリの作成
+            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒" + textBox_testname.Text);// ディレクトリの作成
             Directory.CreateDirectory(makefilepath);
         }
 

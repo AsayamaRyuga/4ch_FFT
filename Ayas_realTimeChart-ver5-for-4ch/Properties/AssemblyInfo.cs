@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // 制御されます。アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更します。
-[assembly: AssemblyTitle("Ayas_realTimeChart-ver1")]
+[assembly: AssemblyTitle("4ch_FFT-verNov19")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Ayas_realTimeChart-ver1")]
+[assembly: AssemblyProduct("4ch_FFT-verNov19")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
