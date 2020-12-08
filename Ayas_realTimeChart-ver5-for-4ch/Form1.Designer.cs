@@ -44,6 +44,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.chart_realtime = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.button_Connect = new System.Windows.Forms.Button();
@@ -79,6 +82,7 @@
             this.chart_row = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.chart_test = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.chart_realtime)).BeginInit();
             this.groupBox_log.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).BeginInit();
@@ -88,6 +92,7 @@
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_row)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_test)).BeginInit();
             this.SuspendLayout();
             // 
             // chart_realtime
@@ -96,7 +101,7 @@
             this.chart_realtime.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart_realtime.Legends.Add(legend1);
-            this.chart_realtime.Location = new System.Drawing.Point(11, 337);
+            this.chart_realtime.Location = new System.Drawing.Point(1104, 9);
             this.chart_realtime.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.chart_realtime.Name = "chart_realtime";
             series1.ChartArea = "ChartArea1";
@@ -115,7 +120,7 @@
             this.chart_realtime.Series.Add(series2);
             this.chart_realtime.Series.Add(series3);
             this.chart_realtime.Series.Add(series4);
-            this.chart_realtime.Size = new System.Drawing.Size(298, 207);
+            this.chart_realtime.Size = new System.Drawing.Size(557, 328);
             this.chart_realtime.TabIndex = 0;
             this.chart_realtime.Text = "chart1";
             // 
@@ -153,12 +158,12 @@
             // 
             // textBox1
             // 
-            this.textBox1.Font = new System.Drawing.Font("MS UI Gothic", 6F);
-            this.textBox1.Location = new System.Drawing.Point(6, 158);
+            this.textBox1.Font = new System.Drawing.Font("MS UI Gothic", 7F);
+            this.textBox1.Location = new System.Drawing.Point(6, 156);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(249, 83);
+            this.textBox1.Size = new System.Drawing.Size(286, 90);
             this.textBox1.TabIndex = 4;
             // 
             // serialPort1
@@ -375,7 +380,7 @@
             // checkBox_serialport
             // 
             this.checkBox_serialport.AutoSize = true;
-            this.checkBox_serialport.Location = new System.Drawing.Point(7, 136);
+            this.checkBox_serialport.Location = new System.Drawing.Point(7, 134);
             this.checkBox_serialport.Name = "checkBox_serialport";
             this.checkBox_serialport.Size = new System.Drawing.Size(106, 16);
             this.checkBox_serialport.TabIndex = 20;
@@ -488,13 +493,30 @@
             this.label1.TabIndex = 20;
             this.label1.Text = "↓↓Fourier Transform↓↓";
             // 
+            // chart_test
+            // 
+            chartArea5.Name = "ChartArea1";
+            this.chart_test.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart_test.Legends.Add(legend5);
+            this.chart_test.Location = new System.Drawing.Point(1104, 343);
+            this.chart_test.Name = "chart_test";
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.chart_test.Series.Add(series8);
+            this.chart_test.Size = new System.Drawing.Size(552, 280);
+            this.chart_test.TabIndex = 22;
+            this.chart_test.Text = "chart1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1100, 635);
+            this.ClientSize = new System.Drawing.Size(1668, 635);
+            this.Controls.Add(this.chart_test);
             this.Controls.Add(this.groupBox_COM);
             this.Controls.Add(this.chart_realtime);
             this.Controls.Add(this.panel1);
@@ -518,6 +540,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart_row)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_test)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -558,6 +581,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox_testname;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_test;
     }
 }
 

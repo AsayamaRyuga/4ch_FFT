@@ -42,6 +42,7 @@ namespace coil_4ch_FFT_ver1
         int N = 1024;//2のべき乗であることを確認する。フーリエ変換の要素数 complexDataの要素数も同様に変更すること↓↓↓
         private double[,] DataBox = new double[1024, 5];
         private double[] timeAve = new double[1024];
+        int cutindex = 4;// この値より下のインデックスは最大ノルム観測に利用しない
         int dataPointNum = 0;// データの個数カウント用
         int[] MaxIndex;// 最大ノルムのインデックスを格納する場所
 
@@ -52,6 +53,7 @@ namespace coil_4ch_FFT_ver1
         static LoggingFFT loggingFFT = new LoggingFFT();
         static LoggingFFTresult loggingFFTresult = new LoggingFFTresult();
         private bool flag_log = false;
+        int FFTcount = 0;
 
         // グラフ作成用
         string legendCH0 = "CH0";
@@ -93,7 +95,9 @@ namespace coil_4ch_FFT_ver1
                 this.Text = "Ayas RealTimeChart ver.5 for 4ch";// UIのタイトル設定
                 
                 comboBox_windowFunc.SelectedIndex = 2;// 窓関数の初期設定
-                
+
+                button_logoff.BackColor = Color.FromArgb(232, 172, 81);
+
                 sw.Stop(); 
             }
             catch{ }
@@ -215,14 +219,16 @@ namespace coil_4ch_FFT_ver1
                     {
                         originalData[i] = Math.Round(Convert.ToDouble(strArrayData[i]), order);// 小数第５位までに四捨五入
                         data[i] = originalData[i] - ZeroData[i];// ゼロ点からの差分をデータとする
+                        //data[i] = -(originalData[i] - ZeroData[i]);// アルミ使用時
 
                         // フィルタリング処理
+                        /***
                         if (data[i] < 0.00005)
                         {
                             data[i] = 0;
-                        }
+                        }***/
                     }
-                    double time = Convert.ToDouble(strArrayData[0]);// 時間
+                    double time = Math.Round(Convert.ToDouble(strArrayData[0]), order);// 時間
 
                     DataBox[dataPointNum, 0] = time;// [s]表示
                     for (int i = 1; i < 5; i++)
@@ -275,7 +281,10 @@ namespace coil_4ch_FFT_ver1
 
                 if (dataPointNum == N)// データ数がNならFFT実行
                 {
+                    FFTcount += 1;
                     this.Invoke(new EventHandler(FFT));// FFT処理スレッドへ
+                    //this.Invoke(new EventHandler(filter));
+                    //filter(,,,);
                     dataPointNum = 0;// データの個数のカウントのリセット
                 }
                 
@@ -306,14 +315,21 @@ namespace coil_4ch_FFT_ver1
 
         private void button_logon_Click(object sender, EventArgs e)
         {
-            flag_log = true;
-            groupBox_log.Text = "Data Log (on)";
-            makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒" + textBox_testname.Text);// ディレクトリの作成
-            Directory.CreateDirectory(makefilepath);
+            this.button_logon.BackColor = Color.FromArgb(0, 135, 60);
+            button_logoff.BackColor = Color.FromArgb(255, 255, 255);
+            if (message != null)
+            {
+                flag_log = true;
+                groupBox_log.Text = "Data Log (on)";
+                makefilepath = filepath + "Logs-" + DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒" + textBox_testname.Text);// ディレクトリの作成
+                Directory.CreateDirectory(makefilepath);
+            }
         }
 
         private void button_logoff_Click(object sender, EventArgs e)
         {
+            this.button_logoff.BackColor = Color.FromArgb(232, 172, 81);
+            button_logon.BackColor = Color.FromArgb(255, 255, 255);
             flag_log = false;
             groupBox_log.Text = "Data Log (off)";
             logging.end();
@@ -337,7 +353,10 @@ namespace coil_4ch_FFT_ver1
             double[] complexDataAfter_CH1 = new double[N];
             double[] complexDataAfter_CH2 = new double[N];
             double[] complexDataAfter_CH3 = new double[N];
+            double[] filteroutput = new double[N];
+            
 
+            // 各リストへの格納
             for (int i = 0; i < N; i++)
             {
                 CH0_data[i] = DataBox[i, 1];
@@ -357,6 +376,15 @@ namespace coil_4ch_FFT_ver1
             chart_windowFunc.Series.Clear();
             chart_FFTmagnitude.Series.Clear();
 
+            /***
+            bandpassfilter(CH0_data, filteroutput, N, 1 / (samplingRate * N), 0.3);
+            for (int i = 0; i < N; i++)
+            {
+                chart_test.Series["bandpassCH0"].Points.AddXY(i, filteroutput[i]);
+            }***/
+
+
+            // 各データをグラフ描画する処理
             for (int i = 0; i < 4; i++)
             {
                 string CH = "CH" + Convert.ToString(i);
@@ -393,9 +421,9 @@ namespace coil_4ch_FFT_ver1
             // FFTグラフの描画設定
             chart_FFTmagnitude.ChartAreas[0].AxisX.Title = "Index";
             chart_FFTmagnitude.ChartAreas[0].AxisY.Title = "Norm";
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Maximum = N / 2;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Maximum = N / 4;
             chart_FFTmagnitude.ChartAreas[0].AxisX.Minimum = 0;
-            chart_FFTmagnitude.ChartAreas[0].AxisX.Interval = N / 8;
+            chart_FFTmagnitude.ChartAreas[0].AxisX.Interval = N / 16;
 
             // ゼロ調整＆複素数データ変換
             for (int i = 0; i < N; i++)
@@ -407,7 +435,8 @@ namespace coil_4ch_FFT_ver1
                 CH3_data[i] = CH3_data[i] - CH3_Ave;
 
 
-                //窓関数処理一般的に、周期性を持った信号やランダム信号の分析で、
+                //窓関数処理
+                //一般的に、周期性を持った信号やランダム信号の分析で、
                 //周波数を重視するときにはハニングウインドウを、
                 //振幅を重視するときにはフラットトップウインドウを使用し
                 //打撃試験で伝達関数を測定するときはレクタンギュラウインドウを使う
@@ -466,11 +495,11 @@ namespace coil_4ch_FFT_ver1
             Fourier.Forward(complexData_CH3, FourierOptions.Default);
 
             // FFTグラフ描画＆logの記録
-            for (int i = 0; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
+            for (int i = cutindex; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
             {
                 if (flag_log)
                 {
-                    string logFFTmsg = i + "," + (i/(samplingRate * N))
+                    string logFFTmsg = FFTcount + "," + i + "," + (i/(samplingRate * N))
                         + "," + Convert.ToString(complexData_CH0[i].Magnitude)
                         + "," + Convert.ToString(complexData_CH1[i].Magnitude)
                         + "," + Convert.ToString(complexData_CH2[i].Magnitude)
@@ -492,7 +521,7 @@ namespace coil_4ch_FFT_ver1
             }
 
             // 最大ノルムの確認
-            for (int i = 0; i < N/2; i++)
+            for (int i = cutindex; i < N/2; i++)
             {
                 
                 if (complexData_CH0[i].Magnitude == complexDataAfter_CH0.Max())
@@ -501,7 +530,7 @@ namespace coil_4ch_FFT_ver1
                     maxMagnitude.Add(complexDataAfter_CH0.Max());
                 }
             }
-            for (int i = 0; i < N / 2; i++)
+            for (int i = cutindex; i < N / 2; i++)
             {
                 if (complexData_CH1[i].Magnitude == complexDataAfter_CH1.Max())
                 {
@@ -509,7 +538,7 @@ namespace coil_4ch_FFT_ver1
                     maxMagnitude.Add(complexDataAfter_CH1.Max());
                 }
             }
-            for (int i = 0; i < N / 2; i++)
+            for (int i = cutindex; i < N / 2; i++)
             {
                 if (complexData_CH2[i].Magnitude == complexDataAfter_CH2.Max())
                 {
@@ -517,7 +546,7 @@ namespace coil_4ch_FFT_ver1
                     maxMagnitude.Add(complexDataAfter_CH2.Max());
                 }
             }
-            for (int i = 0; i < N / 2; i++)
+            for (int i = cutindex; i < N / 2; i++)
             {
                 if (complexData_CH3[i].Magnitude == complexDataAfter_CH3.Max())
                 {
@@ -533,21 +562,21 @@ namespace coil_4ch_FFT_ver1
 
             if (flag_log)
             {
-                //"date,CH0 max Frequency[Hz],CH1 max Frequency[Hz],CH2 max Frequency[Hz],CH3 max Frequency[Hz],CH0 Norm,CH1 Norm,CH2 Norm,CH3 Norm,CH0 MaxIndex,CH1 MaxIndex,CH2 MaxIndex,CH3 MaxIndex,time interval(Ave) ,sampling frequency[Hz]"
-                loggingFFTresult.write(makefilepath + "/",Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[3] / (samplingRate * N))
-                    + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + complexData_CH0[MaxIndex[1]].Magnitude + "," + complexData_CH0[MaxIndex[2]].Magnitude + "," + complexData_CH0[MaxIndex[3]].Magnitude
+                //"FFTtimes,date,CH0 max Frequency[Hz],CH1 max Frequency[Hz],CH2 max Frequency[Hz],CH3 max Frequency[Hz],CH0 Norm,CH1 Norm,CH2 Norm,CH3 Norm,CH0 MaxIndex,CH1 MaxIndex,CH2 MaxIndex,CH3 MaxIndex,time interval(Ave) ,sampling frequency[Hz]"
+                loggingFFTresult.write(makefilepath + "/", FFTcount + "," + Convert.ToString(MaxIndex[0] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[1] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[2] / (samplingRate * N)) + "," + Convert.ToString(MaxIndex[3] / (samplingRate * N))
+                    + "," + complexData_CH0[MaxIndex[0]].Magnitude + "," + complexData_CH1[MaxIndex[1]].Magnitude + "," + complexData_CH2[MaxIndex[2]].Magnitude + "," + complexData_CH3[MaxIndex[3]].Magnitude
                     + "," + Convert.ToString(MaxIndex[0]) + "," + Convert.ToString(MaxIndex[1]) + "," + Convert.ToString(MaxIndex[2]) + "," + Convert.ToString(MaxIndex[3])
                     + "," + samplingRate + "," + (1 / (samplingRate * N)));
 
                 string date = DateTime.Now.ToString("yyyy年MM月dd日-HH時mm分ss秒");
-                label_date.Text = date;
+                label_date.Text = date + "--->" + FFTcount + "回目";
 
                 //コントロールの外観を描画するBitmapの作成
                 Bitmap bmp = new Bitmap(panel1.Width, panel1.Height);
                 //キャプチャする
                 panel1.DrawToBitmap(bmp, new Rectangle(0, 0, panel1.Width, panel1.Height));
                 //ファイルに保存する
-                bmp.Save(makefilepath + "/chart-" + date + ".Jpeg");
+                bmp.Save(makefilepath + "/" + FFTcount + "times-" + date + ".Jpeg");
                 //後始末
                 bmp.Dispose();
 
@@ -573,10 +602,42 @@ namespace coil_4ch_FFT_ver1
             }
         }
 
-        private void filter()
+        public void bandpassfilter(double[] input, double[] output, int size, double samplerate, double freq)// 入力データ,　出力先, 要素数, サンプリング周波数, カットオフ周波数
         {
+            // それぞれの変数は下記のとおり
+            // float samplerate … サンプリング周波数
+            // float freq … カットオフ周波数
 
-            return;
+            // フィルタ係数を計算する
+            double omega = 2.0f * 3.14159265f * freq / samplerate;
+            double alpha = Math.Sin(omega) * Math.Sinh(Math.Log(2.0f) / 2.0 * 0.3 * omega / Math.Sin(omega));
+
+            double a0 = 1.0f + alpha;
+            double a1 = -2.0f * Math.Cos(omega);
+            double a2 = 1.0f - alpha;
+            double b0 = alpha;
+            double b1 = 0.0f;
+            double b2 = -alpha;
+
+            // フィルタ計算用のバッファ変数
+            double in1 = 0.0f;
+            double in2 = 0.0f;
+            double out1 = 0.0f;
+            double out2 = 0.0f;
+
+            // フィルタを適用
+            for (int i = 0; i < size; i++)
+            {
+                // 入力信号にフィルタを適用し、出力信号として書き出す。
+                output[i] = b0 / a0 * input[i] + b1 / a0 * in1 + b2 / a0 * in2
+                                             - a1 / a0 * out1 - a2 / a0 * out2;
+
+                in2 = in1;       // 2つ前の入力信号を更新
+                in1 = input[i];  // 1つ前の入力信号を更新
+
+                out2 = out1;      // 2つ前の出力信号を更新
+                out1 = output[i]; // 1つ前の出力信号を更新
+            }
         }
 
         
