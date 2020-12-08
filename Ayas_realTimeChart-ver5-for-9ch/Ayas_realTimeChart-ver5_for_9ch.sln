@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ayas_realTimeChart-ver5_for_4ch", "Ayas_realTimeChart-ver5_for_4ch.csproj", "{7D577DE4-6315-4343-8375-5BBEA514963C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ayas_realTimeChart-ver5_for_9ch", "Ayas_realTimeChart-ver5_for_9ch.csproj", "{7D577DE4-6315-4343-8375-5BBEA514963C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
