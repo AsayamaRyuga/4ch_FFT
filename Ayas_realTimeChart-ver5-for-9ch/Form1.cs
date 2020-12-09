@@ -29,7 +29,9 @@ namespace coil_4ch_FFT_ver1
     public partial class Form1 : Form
     {
 
-        string message;//センサから送られてくるメッセージ格納用
+        string message1;//センサから送られてくるメッセージ格納用
+        string message2;
+        string message3;
         static Stopwatch sw = new Stopwatch();
         private double[] originalData = new double[5];// 時間＋センサから送られてくる値
         private double[] ZeroData = new double[5];// センサゼロ値
@@ -40,7 +42,7 @@ namespace coil_4ch_FFT_ver1
 
         // フーリエ変換用
         int N = 1024;//2のべき乗であることを確認する。フーリエ変換の要素数 complexDataの要素数も同様に変更すること↓↓↓
-        private double[,] DataBox = new double[1024, 5];
+        private double[,] DataBox1 = new double[1024, 5];
         private double[] timeAve = new double[1024];
         int cutindex = 4;// この値より下のインデックスは最大ノルム観測に利用しない
         int dataPointNum = 0;// データの個数カウント用
@@ -107,12 +109,14 @@ namespace coil_4ch_FFT_ver1
         {
             try
             {
-                message = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 6)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
+                message1 = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 6)) + "," + serialPort1.ReadLine();// 時間＋シリアルポートから読み込んだ値
+                message2 = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 6)) + "," + serialPort1.ReadLine();
+                message3 = Convert.ToString(Math.Round((double)sw.ElapsedTicks / Stopwatch.Frequency, 6)) + "," + serialPort1.ReadLine();
                 if (checkBox_serialport.Checked)
                 {
                     this.Invoke(new EventHandler(DisplayText));
                 }
-                this.Invoke(new EventHandler(store_data));
+                //this.Invoke(new EventHandler(store_data));
             }
             catch { }                                
         }
@@ -187,14 +191,14 @@ namespace coil_4ch_FFT_ver1
 
         private void DisplayText(object sender, EventArgs e)
         {
-            textBox1.AppendText(message + Environment.NewLine);
+            textBox1.AppendText(message2 + Environment.NewLine);
         }
 
         private void store_data(object sender, EventArgs e)
         {
             try
             {
-                string[] strArrayData = message.Split(',');// カンマで分割
+                string[] strArrayData = message1.Split(',');// カンマで分割
 
                 if (strArrayData.Length == 5)
                 {
@@ -202,7 +206,7 @@ namespace coil_4ch_FFT_ver1
                     // ゼロ点調整
                     if (checkBox_zeroset.Checked && flag_zeroset == true)
                     {
-                        for (int i = 1; i < strArrayData.Length; i++)
+                        for (int i = 2; i < strArrayData.Length; i++)
                         {
                             ZeroData[i] = Math.Round(Convert.ToDouble(strArrayData[i]), order);
                         }
@@ -215,7 +219,7 @@ namespace coil_4ch_FFT_ver1
                     }
 
                     // 読み込んだデータの格納(1行のみ、時間以外）
-                    for (int i = 1; i < strArrayData.Length; i++)
+                    for (int i = 2; i < strArrayData.Length; i++)
                     {
                         originalData[i] = Math.Round(Convert.ToDouble(strArrayData[i]), order);// 小数第５位までに四捨五入
                         data[i] = originalData[i] - ZeroData[i];// ゼロ点からの差分をデータとする
@@ -230,10 +234,10 @@ namespace coil_4ch_FFT_ver1
                     }
                     double time = Math.Round(Convert.ToDouble(strArrayData[0]), order);// 時間
 
-                    DataBox[dataPointNum, 0] = time;// [s]表示
+                    DataBox1[dataPointNum, 0] = time;// [s]表示
                     for (int i = 1; i < 5; i++)
                     {
-                        DataBox[dataPointNum, i] = data[i];
+                        DataBox1[dataPointNum, i] = data[i];
                     }
                     
 
@@ -243,9 +247,10 @@ namespace coil_4ch_FFT_ver1
                     }
                     else
                     {
-                        timeAve[dataPointNum] = DataBox[dataPointNum, 0] - DataBox[dataPointNum - 1, 0];
+                        timeAve[dataPointNum] = DataBox1[dataPointNum, 0] - DataBox1[dataPointNum - 1, 0];
                     }
                     
+                    // グラフの表示・非表示設定
                     if (checkBox_CH0.Checked)
                     {
                         chart_realtime.Series[legendCH0].Points.AddXY(time, data[1]);
@@ -317,7 +322,7 @@ namespace coil_4ch_FFT_ver1
         {
             this.button_logon.BackColor = Color.FromArgb(0, 135, 60);
             button_logoff.BackColor = Color.FromArgb(255, 255, 255);
-            if (message != null)
+            if (message1 != null)
             {
                 flag_log = true;
                 groupBox_log.Text = "Data Log (on)";
@@ -359,10 +364,10 @@ namespace coil_4ch_FFT_ver1
             // 各リストへの格納
             for (int i = 0; i < N; i++)
             {
-                CH0_data[i] = DataBox[i, 1];
-                CH1_data[i] = DataBox[i, 2];
-                CH2_data[i] = DataBox[i, 3];
-                CH3_data[i] = DataBox[i, 4];
+                CH0_data[i] = DataBox1[i, 1];
+                CH1_data[i] = DataBox1[i, 2];
+                CH2_data[i] = DataBox1[i, 3];
+                CH3_data[i] = DataBox1[i, 4];
             }
 
             // 平均データの格納
