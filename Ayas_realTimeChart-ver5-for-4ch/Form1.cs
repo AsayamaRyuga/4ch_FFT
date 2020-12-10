@@ -62,6 +62,8 @@ namespace coil_4ch_FFT_ver1
         string legendCH1 = "CH1";
         string legendCH2 = "CH2";
         string legendCH3 = "CH3";
+        string bubbles = "CHbubbles";
+        string bubble_area1 = "Area1";
         int displayTime = 10;// グラフに何秒間分のデータを表示するか(秒)
         private bool flag_zeroset = true;
 
@@ -74,7 +76,8 @@ namespace coil_4ch_FFT_ver1
         private void Form1_Load(object sender, EventArgs e)
         {
             try
-            {   // COM通信用
+            {
+                // コンボボックスに使用可能なCOMポートを格納
                 string[] PortList = SerialPort.GetPortNames();
                 comboBox_COM.Items.Clear();
                 foreach (string PortName in PortList)
@@ -83,8 +86,9 @@ namespace coil_4ch_FFT_ver1
                 }
                 if(comboBox_COM.Items.Count > 0)
                 {
-                    comboBox_COM.SelectedIndex = 0;
+                    comboBox_COM.SelectedIndex = 0;// コンボボックスの初期値設定
                 }
+
                 // グラフの描画設定
                 chart_realtime.ChartAreas[0].AxisX.Title = "time[s]";
                 chart_realtime.ChartAreas[0].AxisY.Title = "Inductance[μH]";
@@ -145,6 +149,7 @@ namespace coil_4ch_FFT_ver1
                 chart_realtime.Titles.Clear();
                 chart_FFTmagnitude.Titles.Clear();
                 chart_windowFunc.Titles.Clear();
+                chart_bubble.Titles.Clear();
 
                 chart_realtime.Titles.Add("Row data");// グラフのタイトル
                 chart_FFTmagnitude.Titles.Add("FFT");// グラフのタイトル
@@ -267,6 +272,11 @@ namespace coil_4ch_FFT_ver1
                     {
                         chart_realtime.Series[legendCH3].Points.AddXY(time, data[4]);
                     }
+                    
+                    if (checkBox_bubble.Checked)
+                    {
+                        bubblemap(data[1], data[2], data[3], data[4]);
+                    }
 
                     // データの個数カウント
                     dataPointNum++;
@@ -288,8 +298,7 @@ namespace coil_4ch_FFT_ver1
                 {
                     FFTcount += 1;
                     this.Invoke(new EventHandler(FFT));// FFT処理スレッドへ
-                    //this.Invoke(new EventHandler(filter));
-                    //filter(,,,);
+                    bubblemap(data[1], data[2], data[3], data[4]);// バブルチャートの作成
                     dataPointNum = 0;// データの個数のカウントのリセット
                 }
                 
@@ -376,20 +385,13 @@ namespace coil_4ch_FFT_ver1
             double CH1_Ave = CH1_data.Average();
             double CH2_Ave = CH2_data.Average();
             double CH3_Ave = CH3_data.Average();
+            double test = CH1_data.Sum();
 
             chart_row.Series.Clear();
             chart_windowFunc.Series.Clear();
             chart_FFTmagnitude.Series.Clear();
 
-            /***
-            bandpassfilter(CH0_data, filteroutput, N, 1 / (samplingRate * N), 0.3);
-            for (int i = 0; i < N; i++)
-            {
-                chart_test.Series["bandpassCH0"].Points.AddXY(i, filteroutput[i]);
-            }***/
-
-
-            // 各データをグラフ描画する処理
+            // 各データをグラフ描画する前処理
             for (int i = 0; i < 4; i++)
             {
                 string CH = "CH" + Convert.ToString(i);
@@ -433,7 +435,7 @@ namespace coil_4ch_FFT_ver1
             // ゼロ調整＆複素数データ変換
             for (int i = 0; i < N; i++)
             {
-                //complexDataBefore[i] = complexDataBefore[i] - averageData;// 平均値処理→この処理がないと周波数ゼロのところに大きなピークが残る
+                // 平均値処理→この処理がないと周波数ゼロのところに大きなピークが残る
                 CH0_data[i] = CH0_data[i] - CH0_Ave;
                 CH1_data[i] = CH1_data[i] - CH1_Ave;
                 CH2_data[i] = CH2_data[i] - CH2_Ave;
@@ -498,6 +500,7 @@ namespace coil_4ch_FFT_ver1
             Fourier.Forward(complexData_CH1, FourierOptions.Default);
             Fourier.Forward(complexData_CH2, FourierOptions.Default);
             Fourier.Forward(complexData_CH3, FourierOptions.Default);
+
 
             // FFTグラフ描画＆logの記録
             for (int i = cutindex; i <= N / 2; i++)// 標準化定理よりFFTの結果で有効なのはNの半分まで
@@ -607,44 +610,67 @@ namespace coil_4ch_FFT_ver1
             }
         }
 
-        public void bandpassfilter(double[] input, double[] output, int size, double samplerate, double freq)// 入力データ,　出力先, 要素数, サンプリング周波数, カットオフ周波数
+        public void bubblemap(double CH0, double CH1, double CH2, double CH3)
         {
-            // それぞれの変数は下記のとおり
-            // float samplerate … サンプリング周波数
-            // float freq … カットオフ周波数
+            // バブルチャート用の設定とデータの格納
+            chart_bubble.Series.Clear();
+            chart_bubble.ChartAreas.Clear();
 
-            // フィルタ係数を計算する
-            double omega = 2.0f * 3.14159265f * freq / samplerate;
-            double alpha = Math.Sin(omega) * Math.Sinh(Math.Log(2.0f) / 2.0 * 0.3 * omega / Math.Sin(omega));
+            chart_bubble.ChartAreas.Add(new ChartArea(bubble_area1));
+            chart_bubble.ChartAreas[bubble_area1].AxisX.Interval = 1.0;
+            chart_bubble.ChartAreas[bubble_area1].AxisY.Interval = 1.0;
+            //chart_bubble.ChartAreas[bubble_area1].AxisY2.Maximum = 0.05;// バブルの大きさの最小値設定
 
-            double a0 = 1.0f + alpha;
-            double a1 = -2.0f * Math.Cos(omega);
-            double a2 = 1.0f - alpha;
-            double b0 = alpha;
-            double b1 = 0.0f;
-            double b2 = -alpha;
+            /***
+            chart_bubble.Series.Add(bubbles);
+            chart_bubble.Series[bubbles].ChartType = SeriesChartType.Bubble;
+            chart_bubble.Series[bubbles].IsVisibleInLegend = false;// 凡例表示設定
+            chart_bubble.Series[bubbles].MarkerStyle = MarkerStyle.Circle;
 
-            // フィルタ計算用のバッファ変数
-            double in1 = 0.0f;
-            double in2 = 0.0f;
-            double out1 = 0.0f;
-            double out2 = 0.0f;
+            // データのセット
+            double[] x_values = new double[4] { 1.0, 1.0, 2.0, 2.0 };
+            double[] y_values = new double[4] { 1.0, 2.0, 1.0, 2.0 };
+            double[] bubble_values = new double[4] { CH2, CH1, CH3, CH0 };
 
-            // フィルタを適用
-            for (int i = 0; i < size; i++)
+            // データをシリーズにセット
+            for (int i = 0; i < y_values.Length; i++)
             {
-                // 入力信号にフィルタを適用し、出力信号として書き出す。
-                output[i] = b0 / a0 * input[i] + b1 / a0 * in1 + b2 / a0 * in2
-                                             - a1 / a0 * out1 - a2 / a0 * out2;
+                //DataPoint dp = new DataPoint((double)x_values[i], y_values[i]);
+                double[] y_vals = new double[2] { y_values[i], bubble_values[i] };
+                DataPoint dp = new DataPoint((double)x_values[i], y_vals);
+                chart_bubble.Series[bubbles].Points.Add(dp);
+            }***/
 
-                in2 = in1;       // 2つ前の入力信号を更新
-                in1 = input[i];  // 1つ前の入力信号を更新
 
-                out2 = out1;      // 2つ前の出力信号を更新
-                out1 = output[i]; // 1つ前の出力信号を更新
+            for (int i = 0; i < 4; i++)
+            {
+                string CH = "CH" + Convert.ToString(i);
+                chart_bubble.Series.Add(CH);
+                chart_bubble.Series[CH].IsValueShownAsLabel = false;
+                chart_bubble.Series[CH].ChartType = SeriesChartType.Bubble;
+                chart_bubble.Series[CH].IsVisibleInLegend = false;// 凡例表示設定
+                chart_bubble.Series[CH].MarkerStyle = MarkerStyle.Circle;
             }
-        }
 
-        
+            double x_values_ch0 = 2.0;
+            double[] y_values_ch0 = new double[2] { 2.0, CH0 };
+            DataPoint dp0 = new DataPoint(x_values_ch0, y_values_ch0);
+            chart_bubble.Series[legendCH0].Points.Add(dp0);
+
+            double x_values_ch1 = 1.0;
+            double[] y_values_ch1 = new double[2] { 2.0, CH1 };
+            DataPoint dp1 = new DataPoint(x_values_ch1, y_values_ch1);
+            chart_bubble.Series[legendCH1].Points.Add(dp1);
+
+            double x_values_ch2 = 1.0;
+            double[] y_values_ch2 = new double[2] { 1.0, CH2 };
+            DataPoint dp2 = new DataPoint(x_values_ch2, y_values_ch2);
+            chart_bubble.Series[legendCH2].Points.Add(dp2);
+
+            double x_values_ch3 = 2.0;
+            double[] y_values_ch3 = new double[2] { 1.0, CH3 };
+            DataPoint dp3 = new DataPoint(x_values_ch3, y_values_ch3);
+            chart_bubble.Series[legendCH3].Points.Add(dp3);
+        }
     }
 }

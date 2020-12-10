@@ -44,6 +44,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -83,6 +86,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.chart_test = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart_bubble = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.checkBox_bubble = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart_realtime)).BeginInit();
             this.groupBox_log.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_FFTmagnitude)).BeginInit();
@@ -93,6 +98,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart_row)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_test)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_bubble)).BeginInit();
             this.SuspendLayout();
             // 
             // chart_realtime
@@ -461,7 +467,7 @@
             this.chart_row.ChartAreas.Add(chartArea4);
             legend4.Name = "Legend1";
             this.chart_row.Legends.Add(legend4);
-            this.chart_row.Location = new System.Drawing.Point(3, 331);
+            this.chart_row.Location = new System.Drawing.Point(28, 375);
             this.chart_row.Name = "chart_row";
             series7.ChartArea = "ChartArea1";
             series7.Legend = "Legend1";
@@ -473,8 +479,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBox_bubble);
+            this.panel1.Controls.Add(this.chart_bubble);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.chart_row);
             this.panel1.Controls.Add(this.chart_FFTmagnitude);
             this.panel1.Controls.Add(this.chart_windowFunc);
             this.panel1.Controls.Add(this.groupBox1);
@@ -495,19 +502,45 @@
             // 
             // chart_test
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chart_test.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart_test.Legends.Add(legend5);
+            chartArea6.Name = "ChartArea1";
+            this.chart_test.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chart_test.Legends.Add(legend6);
             this.chart_test.Location = new System.Drawing.Point(1104, 343);
             this.chart_test.Name = "chart_test";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Series1";
-            this.chart_test.Series.Add(series8);
+            series9.ChartArea = "ChartArea1";
+            series9.Legend = "Legend1";
+            series9.Name = "Series1";
+            this.chart_test.Series.Add(series9);
             this.chart_test.Size = new System.Drawing.Size(552, 280);
             this.chart_test.TabIndex = 22;
             this.chart_test.Text = "chart1";
+            // 
+            // chart_bubble
+            // 
+            chartArea5.Name = "ChartArea1";
+            this.chart_bubble.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart_bubble.Legends.Add(legend5);
+            this.chart_bubble.Location = new System.Drawing.Point(3, 331);
+            this.chart_bubble.Name = "chart_bubble";
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.chart_bubble.Series.Add(series8);
+            this.chart_bubble.Size = new System.Drawing.Size(222, 211);
+            this.chart_bubble.TabIndex = 23;
+            this.chart_bubble.Text = "chart3";
+            // 
+            // checkBox_bubble
+            // 
+            this.checkBox_bubble.AutoSize = true;
+            this.checkBox_bubble.Location = new System.Drawing.Point(3, 309);
+            this.checkBox_bubble.Name = "checkBox_bubble";
+            this.checkBox_bubble.Size = new System.Drawing.Size(162, 16);
+            this.checkBox_bubble.TabIndex = 23;
+            this.checkBox_bubble.Text = "show realtime bubble chart";
+            this.checkBox_bubble.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -517,6 +550,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1668, 635);
             this.Controls.Add(this.chart_test);
+            this.Controls.Add(this.chart_row);
             this.Controls.Add(this.groupBox_COM);
             this.Controls.Add(this.chart_realtime);
             this.Controls.Add(this.panel1);
@@ -541,6 +575,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_test)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_bubble)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -582,6 +617,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox_testname;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart_test;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_bubble;
+        private System.Windows.Forms.CheckBox checkBox_bubble;
     }
 }
 
